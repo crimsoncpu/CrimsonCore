@@ -1,6 +1,8 @@
---// CrimsonCore Notification Component v1.1 Animated
+--// CrimsonCore Notification Component v1.3
 
 local Notification = {}
+
+local TweenService = game:GetService("TweenService")
 
 
 function Notification:Create(ScreenGui, config, Theme, Utility)
@@ -17,9 +19,9 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 		Holder.Name = "Notifications"
 
-		Holder.Size = UDim2.new(0,320,1,-40)
+		Holder.Size = UDim2.fromOffset(350,250)
 
-		Holder.Position = UDim2.new(1,-340,0,20)
+		Holder.Position = UDim2.new(1,-370,1,-270)
 
 		Holder.BackgroundTransparency = 1
 
@@ -28,9 +30,9 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 		local Layout = Instance.new("UIListLayout")
 
-		Layout.Padding = UDim.new(0,10)
+		Layout.Padding = UDim.new(0,12)
 
-		Layout.VerticalAlignment = Enum.VerticalAlignment.Top
+		Layout.VerticalAlignment = Enum.VerticalAlignment.Bottom
 
 		Layout.Parent = Holder
 
@@ -40,18 +42,19 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 	local Box = Instance.new("Frame")
 
-	Box.Size = UDim2.fromOffset(300,65)
+	Box.Size = UDim2.fromOffset(320,70)
 
 	Box.BackgroundColor3 = Theme.Panel
 
 	Box.BackgroundTransparency = 1
 
-	Box.Position = UDim2.fromOffset(40,0)
+	Box.Position = UDim2.fromOffset(60,0)
 
 	Box.Parent = Holder
 
 
-	Utility:Corner(Box,12)
+
+	Utility:Corner(Box,14)
 
 	Utility:Stroke(Box,Theme.Crimson,1)
 
@@ -59,9 +62,9 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 	local Text = Instance.new("TextLabel")
 
-	Text.Size = UDim2.new(1,-20,1,0)
+	Text.Size = UDim2.new(1,-25,1,0)
 
-	Text.Position = UDim2.fromOffset(10,0)
+	Text.Position = UDim2.fromOffset(15,0)
 
 	Text.BackgroundTransparency = 1
 
@@ -71,7 +74,7 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 	Text.Font = Enum.Font.BuilderSansBold
 
-	Text.TextSize = 14
+	Text.TextSize = 15
 
 	Text.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -81,38 +84,68 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 
 
-	-- animate in
+	-- fade + slide in
 
-	Utility:Tween(Box,.35,{
-		BackgroundTransparency = 0,
-		Position = UDim2.fromOffset(0,0)
-	})
+	TweenService:Create(
+		Box,
+		TweenInfo.new(
+			0.45,
+			Enum.EasingStyle.Quint,
+			Enum.EasingDirection.Out
+		),
+		{
+			BackgroundTransparency = 0,
+			Position = UDim2.fromOffset(0,0)
+		}
+	):Play()
 
 
-	Utility:Tween(Text,.35,{
-		TextTransparency = 0
-	})
+
+	TweenService:Create(
+		Text,
+		TweenInfo.new(
+			0.35,
+			Enum.EasingStyle.Quint,
+			Enum.EasingDirection.Out
+		),
+		{
+			TextTransparency = 0
+		}
+	):Play()
 
 
+
+	-- fade + slide out
 
 	task.delay(config.Duration or 3,function()
 
 
-		-- animate out
+		TweenService:Create(
+			Box,
+			TweenInfo.new(
+				0.35,
+				Enum.EasingStyle.Quint,
+				Enum.EasingDirection.In
+			),
+			{
+				BackgroundTransparency = 1,
+				Position = UDim2.fromOffset(70,0)
+			}
+		):Play()
 
-		Utility:Tween(Box,.35,{
-			BackgroundTransparency = 1,
-			Position = UDim2.fromOffset(40,0)
-		})
 
 
-		Utility:Tween(Text,.35,{
-			TextTransparency = 1
-		})
+		TweenService:Create(
+			Text,
+			TweenInfo.new(.25),
+			{
+				TextTransparency = 1
+			}
+		):Play()
+
 
 
 		task.wait(.4)
-
 
 		Box:Destroy()
 
