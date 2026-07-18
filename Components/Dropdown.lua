@@ -1,61 +1,110 @@
 --// CrimsonCore Dropdown Component v1.0
+--// Premium Hybrid Edition
 
 local Dropdown = {}
 
+local TweenService = game:GetService("TweenService")
 
-function Dropdown:Create(Parent, config, Theme, Utility)
+
+function Dropdown:Create(parent, config, Theme, Utility)
 
 	config = config or {}
+
+	local Options = config.Options or {
+		"Option 1",
+		"Option 2"
+	}
 
 
 	local Open = false
 
-	local Selected = config.Default or "Select"
+
+	local Holder = Instance.new("Frame")
+
+	Holder.Name = config.Text or "Dropdown"
+
+	Holder.Size = UDim2.new(1,-10,0,45)
+
+	Holder.BackgroundColor3 = Theme.Panel
+
+	Holder.Parent = parent
 
 
+	Utility:Corner(Holder,12)
 
-	local Frame = Instance.new("Frame")
-
-	Frame.Size = UDim2.new(1,-10,0,38)
-
-	Frame.BackgroundColor3 = Theme.Secondary
-
-	Frame.ClipsDescendants = true
-
-	Frame.Parent = Parent
-
-
-	Utility:Corner(Frame,10)
+	Utility:Stroke(
+		Holder,
+		Theme.Crimson,
+		1.5
+	)
 
 
 
 	local Button = Instance.new("TextButton")
 
-	Button.Size = UDim2.new(1,0,0,38)
+	Button.Size = UDim2.new(1,0,0,45)
 
 	Button.BackgroundTransparency = 1
+
+	Button.Text =
+		config.Text or "Dropdown"
+
 
 	Button.TextColor3 = Theme.Text
 
 	Button.Font = Enum.Font.BuilderSansBold
 
-	Button.TextSize = 14
+	Button.TextSize = 15
 
-	Button.Text = (config.Name or "Dropdown")..": "..Selected
+	Button.TextXAlignment = Enum.TextXAlignment.Left
 
-	Button.Parent = Frame
+	Button.Parent = Holder
 
 
 
-	local Options = Instance.new("Frame")
+	Utility:Padding(
+		Button,
+		15
+	)
 
-	Options.Size = UDim2.new(1,0,0,0)
 
-	Options.Position = UDim2.fromOffset(0,38)
 
-	Options.BackgroundTransparency = 1
+	local Arrow = Instance.new("TextLabel")
 
-	Options.Parent = Frame
+	Arrow.Size = UDim2.fromOffset(30,45)
+
+	Arrow.Position = UDim2.new(1,-35,0,0)
+
+	Arrow.BackgroundTransparency = 1
+
+	Arrow.Text = "▼"
+
+	Arrow.TextColor3 = Theme.Crimson
+
+	Arrow.Font = Enum.Font.BuilderSansBold
+
+	Arrow.TextSize = 16
+
+	Arrow.Parent = Holder
+
+
+
+	local List = Instance.new("Frame")
+
+	List.Size = UDim2.new(1,0,0,0)
+
+	List.Position = UDim2.fromOffset(0,50)
+
+	List.BackgroundColor3 = Theme.Panel
+
+	List.ClipsDescendants = true
+
+	List.Visible = false
+
+	List.Parent = Holder
+
+
+	Utility:Corner(List,12)
 
 
 
@@ -63,57 +112,88 @@ function Dropdown:Create(Parent, config, Theme, Utility)
 
 	Layout.Padding = UDim.new(0,5)
 
-	Layout.Parent = Options
+	Layout.Parent = List
 
 
 
-	local function Select(value)
+	local function Close()
 
-		Selected = value
+		Open = false
 
-		Button.Text =
-			(config.Name or "Dropdown")..": "..value
+		Arrow.Text = "▼"
 
 
-		if config.Callback then
-			config.Callback(value)
-		end
+		TweenService:Create(
+			List,
+			TweenInfo.new(.25),
+			{
+				Size = UDim2.new(1,0,0,0)
+			}
+		):Play()
+
+
+		task.wait(.25)
+
+		List.Visible = false
 
 	end
 
 
 
-	for _,option in pairs(config.Options or {}) do
+	for _,option in ipairs(Options) do
 
 
-		local Option = Instance.new("TextButton")
-
-		Option.Size = UDim2.new(1,0,0,32)
-
-		Option.BackgroundColor3 = Theme.Panel
-
-		Option.TextColor3 = Theme.Text
-
-		Option.Font = Enum.Font.BuilderSansBold
-
-		Option.TextSize = 13
-
-		Option.Text = tostring(option)
-
-		Option.Parent = Options
+		local OptionButton = Instance.new("TextButton")
 
 
-		Utility:Corner(Option,8)
+		OptionButton.Size =
+			UDim2.new(1,-10,0,35)
+
+
+		OptionButton.BackgroundColor3 =
+			Theme.Background
+
+
+		OptionButton.Text =
+			option
+
+
+		OptionButton.TextColor3 =
+			Theme.Text
+
+
+		OptionButton.Font =
+			Enum.Font.BuilderSans
+
+
+		OptionButton.TextSize = 14
+
+
+		OptionButton.Parent = List
 
 
 
-		Option.MouseButton1Click:Connect(function()
+		Utility:Corner(
+			OptionButton,
+			8
+		)
 
-			Select(option)
 
-			Open = false
 
-			Frame.Size = UDim2.new(1,-10,0,38)
+		OptionButton.MouseButton1Click:Connect(function()
+
+
+			Button.Text = option
+
+
+			if config.Callback then
+
+				config.Callback(option)
+
+			end
+
+
+			Close()
 
 		end)
 
@@ -124,39 +204,45 @@ function Dropdown:Create(Parent, config, Theme, Utility)
 
 	Button.MouseButton1Click:Connect(function()
 
+
 		Open = not Open
 
 
 		if Open then
 
-			local Height =
-				(#(config.Options or {}) * 37) + 45
+
+			List.Visible = true
+
+			Arrow.Text = "▲"
 
 
-			Utility:Tween(Frame,.2,{
-				Size = UDim2.new(1,-10,0,Height)
-			})
+			TweenService:Create(
+				List,
+				TweenInfo.new(.25),
+				{
+					Size =
+						UDim2.new(
+							1,
+							0,
+							0,
+							(#Options*40)+10
+						)
+				}
+			):Play()
 
 
 		else
 
-			Utility:Tween(Frame,.2,{
-				Size = UDim2.new(1,-10,0,38)
-			})
+			Close()
 
 		end
+
 
 	end)
 
 
 
-	return {
-
-		Get = function()
-			return Selected
-		end
-
-	}
+	return Holder
 
 end
 
