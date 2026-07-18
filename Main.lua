@@ -1,16 +1,17 @@
---// CrimsonCore Main Loader v1.4
+--// CrimsonCore Main Loader v2.0
+--// Premium Hybrid Edition
 
 local CrimsonCore = {}
 
-
 local BaseURL =
-"https://raw.githubusercontent.com/crimsoncpu/CrimsonCore/main/"
-
+	"https://raw.githubusercontent.com/crimsoncpu/CrimsonCore/main/"
 
 
 local function Load(path)
 
-	local Source = game:HttpGet(BaseURL .. path)
+	local Source = game:HttpGet(
+		BaseURL .. path
+	)
 
 
 	local Success, Result = pcall(function()
@@ -20,11 +21,13 @@ local function Load(path)
 	end)
 
 
-
 	if not Success then
 
 		error(
-			"CrimsonCore failed loading "..path.."\n"..tostring(Result)
+			"CrimsonCore failed loading "
+			.. path
+			.. "\n"
+			.. tostring(Result)
 		)
 
 	end
@@ -90,15 +93,6 @@ CrimsonCore.Components = {
 	Slider =
 		Load("Components/Slider.lua"),
 
-	Dropdown =
-		Load("Components/Dropdown.lua"),
-
-	Keybind =
-		Load("Components/Keybind.lua"),
-
-	Label =
-		Load("Components/Label.lua"),
-
 	Notification =
 		Load("Components/Notification.lua")
 
@@ -107,6 +101,7 @@ CrimsonCore.Components = {
 
 
 function CrimsonCore:CreateWindow(config)
+
 
 	return CrimsonCore.Window:Create(
 
@@ -132,7 +127,7 @@ end
 
 
 
-print("CrimsonCore Loaded v1.4")
+print("=== CrimsonCore v2.0 Loaded ===")
 
 
 return CrimsonCore
