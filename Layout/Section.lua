@@ -1,5 +1,5 @@
---// CrimsonCore Section System v2.1
---// Component Ready Edition
+--// CrimsonCore Section System v2.2
+--// Full Component Support
 
 local Section = {}
 
@@ -15,13 +15,25 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 	Holder.Name = title or "Section"
 
-	Holder.Size = UDim2.new(1,-10,0,60)
+	Holder.Size =
+		UDim2.new(
+			1,
+			-10,
+			0,
+			60
+		)
 
-	Holder.BackgroundColor3 = Theme.Panel
 
-	Holder.BackgroundTransparency = Theme.CardTransparency or .2
+	Holder.BackgroundColor3 =
+		Theme.Panel
+
+
+	Holder.BackgroundTransparency =
+		Theme.CardTransparency or .25
+
 
 	Holder.Parent = Page
+
 
 
 	Utility:Corner(
@@ -40,21 +52,43 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 	local Title = Instance.new("TextLabel")
 
-	Title.Size = UDim2.new(1,-25,0,35)
+	Title.Size =
+		UDim2.new(
+			1,
+			-20,
+			0,
+			35
+		)
 
-	Title.Position = UDim2.fromOffset(15,5)
+
+	Title.Position =
+		UDim2.fromOffset(
+			10,
+			5
+		)
+
 
 	Title.BackgroundTransparency = 1
 
-	Title.Text = title or "Section"
 
-	Title.TextColor3 = Theme.Text
+	Title.Text =
+		title or "Section"
 
-	Title.Font = Enum.Font.BuilderSansBold
+
+	Title.TextColor3 =
+		Theme.Text
+
+
+	Title.Font =
+		Enum.Font.BuilderSansBold
+
 
 	Title.TextSize = 18
 
-	Title.TextXAlignment = Enum.TextXAlignment.Left
+
+	Title.TextXAlignment =
+		Enum.TextXAlignment.Left
+
 
 	Title.Parent = Holder
 
@@ -62,13 +96,28 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 	local Container = Instance.new("Frame")
 
-	Container.Size = UDim2.new(1,-20,0,0)
+	Container.Size =
+		UDim2.new(
+			1,
+			-20,
+			0,
+			0
+		)
 
-	Container.Position = UDim2.fromOffset(10,45)
+
+	Container.Position =
+		UDim2.fromOffset(
+			10,
+			45
+		)
+
 
 	Container.BackgroundTransparency = 1
 
-	Container.AutomaticSize = Enum.AutomaticSize.Y
+
+	Container.AutomaticSize =
+		Enum.AutomaticSize.Y
+
 
 	Container.Parent = Holder
 
@@ -76,7 +125,12 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 	local Layout = Instance.new("UIListLayout")
 
-	Layout.Padding = UDim.new(0,8)
+	Layout.Padding =
+		UDim.new(
+			0,
+			8
+		)
+
 
 	Layout.Parent = Container
 
@@ -86,42 +140,44 @@ function Section:Create(Page, title, Theme, Utility, Components)
 		"AbsoluteContentSize"
 	):Connect(function()
 
-		local Size =
-			Layout.AbsoluteContentSize.Y
-
 
 		Holder.Size =
 			UDim2.new(
 				1,
 				-10,
 				0,
-				Size + 60
+				Layout.AbsoluteContentSize.Y + 60
 			)
+
 
 	end)
 
 
 
-	-- entrance animation
+	-- animation
 
 	Holder.BackgroundTransparency = 1
 
 
 	TweenService:Create(
+
 		Holder,
+
 		TweenInfo.new(
 			.35,
 			Enum.EasingStyle.Quint
 		),
+
 		{
 			BackgroundTransparency =
-				Theme.CardTransparency or .2
+				Theme.CardTransparency or .25
 		}
+
 	):Play()
 
 
 
-	--// Components
+	-- Components
 
 
 	function Object:CreateButton(config)
@@ -189,20 +245,40 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 
 
-	-- future component handler
+	function Object:CreateKeybind(config)
 
-	function Object:AddComponent(Name, config)
+		return Components.Keybind:Create(
+			Container,
+			config,
+			Theme,
+			Utility
+		)
 
-		if Components[Name] then
+	end
 
-			return Components[Name]:Create(
-				Container,
-				config,
-				Theme,
-				Utility
-			)
 
-		end
+
+	function Object:CreateLabel(config)
+
+		return Components.Label:Create(
+			Container,
+			config,
+			Theme,
+			Utility
+		)
+
+	end
+
+
+
+	function Object:CreateDivider(config)
+
+		return Components.Divider:Create(
+			Container,
+			config,
+			Theme,
+			Utility
+		)
 
 	end
 
