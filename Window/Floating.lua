@@ -1,9 +1,9 @@
---// CrimsonCore Floating Button v3.0
+--// CrimsonCore Floating Button v3.1
 
 local Floating = {}
 
-local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
 
 function Floating:Create(ScreenGui, Main, Theme, Utility)
@@ -12,7 +12,7 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	Button.Name = "CrimsonFloating"
 
-	Button.Size = UDim2.fromOffset(62,62)
+	Button.Size = UDim2.fromOffset(60,60)
 
 	Button.Position = UDim2.new(.5,0,.5,0)
 
@@ -30,8 +30,9 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	Button.AutoButtonColor = false
 
-	Button.Parent = ScreenGui
+	Button.Visible = false
 
+	Button.Parent = ScreenGui
 
 
 	Utility:Corner(Button,100)
@@ -44,52 +45,17 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	local Glow = Instance.new("UIStroke")
 
-	Glow.Thickness = 4
-
-	Glow.Transparency = .4
-
 	Glow.Color = Theme.Crimson
+
+	Glow.Thickness = 5
+
+	Glow.Transparency = .3
 
 	Glow.Parent = Button
 
 
 
-	-- shadow
-
-	local Shadow = Instance.new("ImageLabel")
-
-	Shadow.Name = "Shadow"
-
-	Shadow.Size = UDim2.fromScale(1.8,1.8)
-
-	Shadow.Position = UDim2.fromScale(-.4,-.4)
-
-	Shadow.BackgroundTransparency = 1
-
-	Shadow.Image =
-		"rbxassetid://6014261993"
-
-	Shadow.ImageColor3 = Theme.Crimson
-
-	Shadow.ImageTransparency = .55
-
-	Shadow.ZIndex = Button.ZIndex - 1
-
-	Shadow.Parent = Button
-
-
-
-	local Scale = Instance.new("UIScale")
-
-	Scale.Parent = Button
-
-
-
-	Button.Visible = false
-
-
-
-	-- pulse animation
+	-- pulse
 
 	task.spawn(function()
 
@@ -103,7 +69,7 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 					Enum.EasingDirection.InOut
 				),
 				{
-					Transparency = .1
+					Transparency = .7
 				}
 			):Play()
 
@@ -118,7 +84,7 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 					Enum.EasingDirection.InOut
 				),
 				{
-					Transparency = .6
+					Transparency = .2
 				}
 			):Play()
 
@@ -130,37 +96,23 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 
-	local Dragging = false
-
-	local StartInput
-
-	local StartPosition
+	local dragging = false
+	local dragStart
+	local startPos
 
 
 
 	Button.InputBegan:Connect(function(input)
 
-		if input.UserInputType ==
-			Enum.UserInputType.MouseButton1
-		or input.UserInputType ==
-			Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
 
-			Dragging = true
+			dragging = true
 
-			StartInput = input.Position
+			dragStart = input.Position
 
-			StartPosition = Button.Position
-
-
-
-			TweenService:Create(
-				Scale,
-				TweenInfo.new(.15),
-				{
-					Scale = 1.12
-				}
-			):Play()
+			startPos = Button.Position
 
 		end
 
@@ -170,28 +122,22 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	UserInputService.InputChanged:Connect(function(input)
 
-		if Dragging and
+		if dragging and
 		(
-			input.UserInputType ==
-			Enum.UserInputType.MouseMovement
-			or
-			input.UserInputType ==
-			Enum.UserInputType.Touch
+			input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch
 		) then
 
 
-			local Delta =
-				input.Position - StartInput
+			local delta = input.Position - dragStart
 
 
-
-			Button.Position =
-				UDim2.new(
-					StartPosition.X.Scale,
-					StartPosition.X.Offset + Delta.X,
-					StartPosition.Y.Scale,
-					StartPosition.Y.Offset + Delta.Y
-				)
+			Button.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
 
 		end
 
@@ -201,62 +147,42 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	UserInputService.InputEnded:Connect(function(input)
 
-		if input.UserInputType ==
-			Enum.UserInputType.MouseButton1
-		or input.UserInputType ==
-			Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
 
-			if Dragging then
+			if dragging then
+
+				dragging = false
 
 
-				Dragging = false
+				local camera = workspace.CurrentCamera
+
+				local size = camera.ViewportSize
 
 
-
-				local Camera =
-					workspace.CurrentCamera
-
-
-
-				local Size =
-					Camera.ViewportSize
-
-
-
-				local CenterX =
+				local x =
 					Button.AbsolutePosition.X +
 					Button.AbsoluteSize.X/2
 
 
-
-				local CenterY =
+				local y =
 					Button.AbsolutePosition.Y +
 					Button.AbsoluteSize.Y/2
 
 
 
-				local SnapX
+				local snapX
 
+				if x < size.X/2 then
 
-				if CenterX < Size.X/2 then
-
-					SnapX = 35
+					snapX = 30
 
 				else
 
-					SnapX = Size.X - 35
+					snapX = size.X - 30
 
 				end
-
-
-
-				local SnapY =
-					math.clamp(
-						CenterY,
-						90,
-						Size.Y - 90
-					)
 
 
 
@@ -268,21 +194,14 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 						Enum.EasingDirection.Out
 					),
 					{
-						Position =
-							UDim2.fromOffset(
-								SnapX,
-								SnapY
+						Position = UDim2.fromOffset(
+							snapX,
+							math.clamp(
+								y,
+								100,
+								size.Y-100
 							)
-					}
-				):Play()
-
-
-
-				TweenService:Create(
-					Scale,
-					TweenInfo.new(.2),
-					{
-						Scale = 1
+						)
 					}
 				):Play()
 
