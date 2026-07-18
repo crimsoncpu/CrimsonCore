@@ -1,4 +1,4 @@
---// CrimsonCore Notification Component v1.4
+--// CrimsonCore Notification Component v1.5
 
 local Notification = {}
 
@@ -21,8 +21,8 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 		Holder.Size = UDim2.fromOffset(350,250)
 
-		-- Roblox style bottom-right, slightly above bottom
-		Holder.Position = UDim2.new(1,-370,1,-300)
+		-- bottom right Roblox-style position
+		Holder.Position = UDim2.new(1,-340,1,-330)
 
 		Holder.BackgroundTransparency = 1
 
@@ -85,7 +85,7 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 
 
-	-- fade + slide in
+	-- smooth fade + slide in
 
 	TweenService:Create(
 		Box,
@@ -116,7 +116,10 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 
 
+	-- fade + slide out
+
 	task.delay(config.Duration or 3,function()
+
 
 		TweenService:Create(
 			Box,
@@ -135,7 +138,11 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 		TweenService:Create(
 			Text,
-			TweenInfo.new(.25),
+			TweenInfo.new(
+				0.25,
+				Enum.EasingStyle.Quint,
+				Enum.EasingDirection.In
+			),
 			{
 				TextTransparency = 1
 			}
@@ -148,6 +155,7 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 		Box:Destroy()
 
 	end)
+
 
 
 	return Box
