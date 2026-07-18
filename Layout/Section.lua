@@ -1,5 +1,5 @@
---// CrimsonCore Section System v2.0
---// Premium Hybrid Edition
+--// CrimsonCore Section System v2.1
+--// Component Ready Edition
 
 local Section = {}
 
@@ -8,23 +8,20 @@ local TweenService = game:GetService("TweenService")
 
 function Section:Create(Page, title, Theme, Utility, Components)
 
-
 	local Object = {}
-
 
 
 	local Holder = Instance.new("Frame")
 
 	Holder.Name = title or "Section"
 
-	Holder.Size = UDim2.new(1,-10,0,50)
+	Holder.Size = UDim2.new(1,-10,0,60)
 
 	Holder.BackgroundColor3 = Theme.Panel
 
-	Holder.BackgroundTransparency = .15
+	Holder.BackgroundTransparency = Theme.CardTransparency or .2
 
 	Holder.Parent = Page
-
 
 
 	Utility:Corner(
@@ -73,7 +70,7 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 	Container.AutomaticSize = Enum.AutomaticSize.Y
 
-	Container.Parent = Page
+	Container.Parent = Holder
 
 
 
@@ -85,36 +82,27 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 
 
-	Holder.Size =
-		UDim2.new(
-			1,-10,
-			0,
-			50
-		)
-
-
-
-	Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-
+	Layout:GetPropertyChangedSignal(
+		"AbsoluteContentSize"
+	):Connect(function()
 
 		local Size =
 			Layout.AbsoluteContentSize.Y
 
 
-
 		Holder.Size =
 			UDim2.new(
-				1,-10,
+				1,
+				-10,
 				0,
 				Size + 60
 			)
-
 
 	end)
 
 
 
-	-- small entrance animation
+	-- entrance animation
 
 	Holder.BackgroundTransparency = 1
 
@@ -126,18 +114,14 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			Enum.EasingStyle.Quint
 		),
 		{
-			BackgroundTransparency = .15
+			BackgroundTransparency =
+				Theme.CardTransparency or .2
 		}
 	):Play()
 
 
 
-	local function AddComponent(component)
-
-		component.Parent = Container
-
-	end
-
+	--// Components
 
 
 	function Object:CreateButton(config)
@@ -174,6 +158,51 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			Theme,
 			Utility
 		)
+
+	end
+
+
+
+	function Object:CreateDropdown(config)
+
+		return Components.Dropdown:Create(
+			Container,
+			config,
+			Theme,
+			Utility
+		)
+
+	end
+
+
+
+	function Object:CreateTextbox(config)
+
+		return Components.Textbox:Create(
+			Container,
+			config,
+			Theme,
+			Utility
+		)
+
+	end
+
+
+
+	-- future component handler
+
+	function Object:AddComponent(Name, config)
+
+		if Components[Name] then
+
+			return Components[Name]:Create(
+				Container,
+				config,
+				Theme,
+				Utility
+			)
+
+		end
 
 	end
 
