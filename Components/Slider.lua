@@ -1,38 +1,53 @@
---// CrimsonCore Slider Component v1.1 (Mobile Support)
+--// CrimsonCore Slider Component v2.0
+--// Premium Hybrid Edition
 
 local Slider = {}
 
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 
 
-function Slider:Create(Parent, config, Theme, Utility)
+function Slider:Create(parent, config, Theme, Utility)
 
 	config = config or {}
 
 
+
 	local Min = config.Min or 0
+
 	local Max = config.Max or 100
-	local Value = config.Default or Min
+
+	local Default = config.Default or Min
 
 
-	local Frame = Instance.new("Frame")
 
-	Frame.Size = UDim2.new(1,-10,0,55)
+	local Holder = Instance.new("Frame")
 
-	Frame.BackgroundColor3 = Theme.Secondary
+	Holder.Name = config.Name or "Slider"
 
-	Frame.Parent = Parent
+	Holder.Size = UDim2.new(1,-10,0,60)
+
+	Holder.BackgroundColor3 = Theme.Panel
+
+	Holder.Parent = parent
 
 
-	Utility:Corner(Frame,10)
+
+	Utility:Corner(Holder,12)
+
+	Utility:Stroke(
+		Holder,
+		Theme.Crimson,
+		1.5
+	)
 
 
 
 	local Label = Instance.new("TextLabel")
 
-	Label.Size = UDim2.new(1,-20,0,25)
+	Label.Size = UDim2.new(.7,0,0,25)
 
-	Label.Position = UDim2.fromOffset(10,5)
+	Label.Position = UDim2.fromOffset(15,5)
 
 	Label.BackgroundTransparency = 1
 
@@ -40,28 +55,29 @@ function Slider:Create(Parent, config, Theme, Utility)
 
 	Label.Font = Enum.Font.BuilderSansBold
 
-	Label.TextSize = 14
+	Label.TextSize = 15
 
 	Label.TextXAlignment = Enum.TextXAlignment.Left
 
-	Label.Text = (config.Name or "Slider")..": "..Value
+	Label.Text = (config.Text or "Slider") .. ": " .. Default
 
-	Label.Parent = Frame
+	Label.Parent = Holder
 
 
 
 	local Bar = Instance.new("Frame")
 
-	Bar.Size = UDim2.new(.9,0,0,8)
+	Bar.Size = UDim2.new(1,-30,0,8)
 
-	Bar.Position = UDim2.fromScale(.05,.65)
+	Bar.Position = UDim2.fromOffset(15,40)
 
-	Bar.BackgroundColor3 = Theme.Panel
+	Bar.BackgroundColor3 = Color3.fromRGB(50,50,50)
 
-	Bar.Parent = Frame
+	Bar.Parent = Holder
 
 
-	Utility:Corner(Bar,10)
+
+	Utility:Corner(Bar,100)
 
 
 
@@ -69,54 +85,105 @@ function Slider:Create(Parent, config, Theme, Utility)
 
 	Fill.BackgroundColor3 = Theme.Crimson
 
-	Fill.Size = UDim2.new(
-		(Value-Min)/(Max-Min),
-		0,
-		1,
-		0
-	)
+	Fill.Size = UDim2.fromScale(0,1)
 
 	Fill.Parent = Bar
 
 
-	Utility:Corner(Fill,10)
+
+	Utility:Corner(Fill,100)
 
 
+
+	local Knob = Instance.new("Frame")
+
+	Knob.Size = UDim2.fromOffset(18,18)
+
+	Knob.BackgroundColor3 = Theme.Text
+
+	Knob.AnchorPoint = Vector2.new(.5,.5)
+
+	Knob.Position = UDim2.fromScale(0,.5)
+
+	Knob.Parent = Bar
+
+
+
+	Utility:Corner(Knob,100)
+
+
+
+	local Value = Default
 
 	local Dragging = false
 
 
 
-	local function Update(input)
-
-		local Percent = math.clamp(
-			(input.Position.X - Bar.AbsolutePosition.X)
-			/ Bar.AbsoluteSize.X,
-			0,
-			1
-		)
+	local function SetValue(inputX)
 
 
-		Value = math.floor(
-			Min + ((Max-Min) * Percent)
-		)
+		local Relative =
+			math.clamp(
+				inputX - Bar.AbsolutePosition.X,
+				0,
+				Bar.AbsoluteSize.X
+			)
 
 
-		Fill.Size = UDim2.new(
-			Percent,
-			0,
-			1,
-			0
-		)
+
+		local Percent =
+			Relative / Bar.AbsoluteSize.X
+
+
+
+		Value =
+			math.floor(
+				Min +
+				(Max-Min) *
+				Percent
+			)
+
+
+
+		TweenService:Create(
+			Fill,
+			TweenInfo.new(.15),
+			{
+				Size =
+					UDim2.fromScale(
+						Percent,
+						1
+					)
+			}
+		):Play()
+
+
+
+		TweenService:Create(
+			Knob,
+			TweenInfo.new(.15),
+			{
+				Position =
+					UDim2.fromScale(
+						Percent,
+						.5
+					)
+			}
+		):Play()
+
 
 
 		Label.Text =
-			(config.Name or "Slider")..": "..Value
+			(config.Text or "Slider")
+			.. ": "
+			.. Value
 
 
 
 		if config.Callback then
+
 			config.Callback(Value)
+
 		end
 
 	end
@@ -125,12 +192,16 @@ function Slider:Create(Parent, config, Theme, Utility)
 
 	Bar.InputBegan:Connect(function(input)
 
-		if input.UserInputType == Enum.UserInputType.MouseButton1
-		or input.UserInputType == Enum.UserInputType.Touch then
+
+		if input.UserInputType ==
+			Enum.UserInputType.MouseButton1
+		or input.UserInputType ==
+			Enum.UserInputType.Touch then
+
 
 			Dragging = true
 
-			Update(input)
+			SetValue(input.Position.X)
 
 		end
 
@@ -140,16 +211,21 @@ function Slider:Create(Parent, config, Theme, Utility)
 
 	UserInputService.InputChanged:Connect(function(input)
 
-		if Dragging then
 
-			if input.UserInputType == Enum.UserInputType.MouseMovement
-			or input.UserInputType == Enum.UserInputType.Touch then
+		if Dragging and
+		(
+			input.UserInputType ==
+			Enum.UserInputType.MouseMovement
+			or
+			input.UserInputType ==
+			Enum.UserInputType.Touch
+		) then
 
-				Update(input)
 
-			end
+			SetValue(input.Position.X)
 
 		end
+
 
 	end)
 
@@ -157,18 +233,51 @@ function Slider:Create(Parent, config, Theme, Utility)
 
 	UserInputService.InputEnded:Connect(function(input)
 
-		if input.UserInputType == Enum.UserInputType.MouseButton1
-		or input.UserInputType == Enum.UserInputType.Touch then
+
+		if input.UserInputType ==
+			Enum.UserInputType.MouseButton1
+		or input.UserInputType ==
+			Enum.UserInputType.Touch then
+
 
 			Dragging = false
 
+
 		end
+
 
 	end)
 
 
 
+	SetValue(
+		Bar.AbsolutePosition.X +
+		(
+			(Default-Min)/(Max-Min)
+			*
+			Bar.AbsoluteSize.X
+		)
+	)
+
+
+
 	return {
+
+		Set = function(_,number)
+
+			Value = number
+
+			SetValue(
+				Bar.AbsolutePosition.X +
+				(
+					(number-Min)/(Max-Min)
+					*
+					Bar.AbsoluteSize.X
+				)
+			)
+
+		end,
+
 
 		Get = function()
 
