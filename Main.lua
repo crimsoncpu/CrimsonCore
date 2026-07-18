@@ -1,4 +1,4 @@
---// CrimsonCore Main Loader v1.0
+--// CrimsonCore Main Loader v1.1
 
 local CrimsonCore = {}
 
@@ -12,15 +12,21 @@ local function Load(path)
 
 	local Source = game:HttpGet(BaseURL .. path)
 
+
 	local Success, Result = pcall(function()
+
 		return loadstring(Source)()
+
 	end)
 
 
+
 	if not Success then
+
 		error(
 			"CrimsonCore failed loading "..path.."\n"..tostring(Result)
 		)
+
 	end
 
 
@@ -51,22 +57,38 @@ CrimsonCore.Window =
 	Load("Window/Window.lua")
 
 
+CrimsonCore.Drag =
+	Load("Window/Drag.lua")
 
 
+CrimsonCore.Floating =
+	Load("Window/Floating.lua")
+
+
+
+-- Create Window
 
 function CrimsonCore:CreateWindow(config)
 
 	return CrimsonCore.Window:Create(
+
 		config,
+
 		CrimsonCore.Theme,
-		CrimsonCore.Utility
+
+		CrimsonCore.Utility,
+
+		CrimsonCore.Drag,
+
+		CrimsonCore.Floating
+
 	)
 
 end
 
 
 
-print("CrimsonCore Loaded v1.0")
+print("Crimson Hub Loaded!")
 
 
 return CrimsonCore
