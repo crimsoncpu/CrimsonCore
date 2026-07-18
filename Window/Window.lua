@@ -1,69 +1,27 @@
---// CrimsonCore Window System v2.1
---// Transparent Glass Edition
+--// CrimsonCore Window System v2.7
+--// Glass + Smooth Resize Edition
 
 local Window = {}
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local Lighting = game:GetService("Lighting")
 
 local Player = Players.LocalPlayer
 
 
 
-local function Tween(Object, Time, Properties)
-
-	local TweenInfoData = TweenInfo.new(
-		Time,
-		Enum.EasingStyle.Quint,
-		Enum.EasingDirection.Out
-	)
-
-
-	local TweenObject =
-		TweenService:Create(
-			Object,
-			TweenInfoData,
-			Properties
-		)
-
-
-	TweenObject:Play()
-
-	return TweenObject
-
-end
-
-
-
-function Window:Create(
-	config,
-	Theme,
-	Utility,
-	Drag,
-	Floating,
-	Tab,
-	Section,
-	Components
-)
-
+function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Components)
 
 	config = config or {}
 
 
 
-	-- blur
+	-- remove old UI
 
-	if Theme.Blur then
+	local Old = Player.PlayerGui:FindFirstChild("CrimsonCore")
 
-		local Blur = Instance.new("BlurEffect")
-
-		Blur.Name = "CrimsonCoreBlur"
-
-		Blur.Size = Theme.BlurSize or 12
-
-		Blur.Parent = Lighting
-
+	if Old then
+		Old:Destroy()
 	end
 
 
@@ -83,8 +41,6 @@ function Window:Create(
 
 	local Main = Instance.new("Frame")
 
-	Main.Name = "MainWindow"
-
 	Main.Size =
 		UDim2.fromOffset(
 			760,
@@ -93,26 +49,24 @@ function Window:Create(
 
 	Main.Position =
 		UDim2.fromScale(
-			.5,
-			.5
+			0.5,
+			0.5
 		)
 
 	Main.AnchorPoint =
 		Vector2.new(
-			.5,
-			.5
+			0.5,
+			0.5
 		)
-
 
 	Main.BackgroundColor3 =
 		Theme.Background
 
-
 	Main.BackgroundTransparency =
-		Theme.MainTransparency
+		Theme.MainTransparency or .35
 
-
-	Main.Parent = ScreenGui
+	Main.Parent =
+		ScreenGui
 
 
 
@@ -130,27 +84,10 @@ function Window:Create(
 
 
 
-	local Scale =
-		Instance.new("UIScale")
+	local OriginalSize =
+		Main.Size
 
 
-	Scale.Scale = .85
-
-	Scale.Parent = Main
-
-
-
-	Tween(
-		Scale,
-		.45,
-		{
-			Scale = 1
-		}
-	)
-
-
-
-	-- top bar
 
 	local Top = Instance.new("Frame")
 
@@ -162,16 +99,14 @@ function Window:Create(
 			55
 		)
 
-
 	Top.BackgroundColor3 =
 		Theme.Panel
 
-
 	Top.BackgroundTransparency =
-		Theme.PanelTransparency
+		0.45
 
-
-	Top.Parent = Main
+	Top.Parent =
+		Main
 
 
 
@@ -183,12 +118,10 @@ function Window:Create(
 
 
 	if Drag then
-
 		Drag:Enable(
 			Main,
 			Top
 		)
-
 	end
 
 
@@ -197,12 +130,11 @@ function Window:Create(
 
 	Title.Size =
 		UDim2.new(
-			.5,
+			0.5,
 			0,
 			1,
 			0
 		)
-
 
 	Title.Position =
 		UDim2.fromOffset(
@@ -210,38 +142,30 @@ function Window:Create(
 			0
 		)
 
-
 	Title.BackgroundTransparency = 1
-
 
 	Title.Text =
 		config.Name or "CrimsonCore"
 
-
 	Title.TextColor3 =
 		Theme.Text
-
 
 	Title.Font =
 		Enum.Font.BuilderSansBold
 
-
 	Title.TextSize = 24
-
 
 	Title.TextXAlignment =
 		Enum.TextXAlignment.Left
 
+	Title.Parent =
+		Top
 
-	Title.Parent = Top
 
 
+	local function TopButton(text, offset)
 
-	local function TopButton(Text, Offset)
-
-		local Button =
-			Instance.new("TextButton")
-
+		local Button = Instance.new("TextButton")
 
 		Button.Size =
 			UDim2.fromOffset(
@@ -249,50 +173,36 @@ function Window:Create(
 				35
 			)
 
-
 		Button.Position =
 			UDim2.new(
 				1,
-				Offset,
-				.5,
+				offset,
+				0.5,
 				-17
 			)
 
-
-		Button.BackgroundColor3 =
-			Theme.Crimson
-
-
-		Button.BackgroundTransparency =
-			.15
-
-
-		Button.Text = Text
-
+		Button.Text =
+			text
 
 		Button.TextColor3 =
 			Theme.Text
 
+		Button.BackgroundColor3 =
+			Theme.Crimson
 
 		Button.Font =
 			Enum.Font.BuilderSansBold
 
-
 		Button.TextSize = 18
 
-
-		Button.AutoButtonColor = false
-
-
-		Button.Parent = Top
-
+		Button.Parent =
+			Top
 
 
 		Utility:Corner(
 			Button,
 			10
 		)
-
 
 
 		return Button
@@ -302,15 +212,24 @@ function Window:Create(
 
 
 	local Minimize =
-		TopButton("-", -135)
+		TopButton(
+			"-",
+			-135
+		)
 
 
 	local Maximize =
-		TopButton("+", -90)
+		TopButton(
+			"+",
+			-90
+		)
 
 
 	local Close =
-		TopButton("X", -45)
+		TopButton(
+			"X",
+			-45
+		)
 
 
 
@@ -328,8 +247,9 @@ function Window:Create(
 				Utility
 			)
 
-
-		RestoreButton.Visible = false
+		if RestoreButton then
+			RestoreButton.Visible = false
+		end
 
 	end
 
@@ -337,25 +257,79 @@ function Window:Create(
 
 	Minimize.MouseButton1Click:Connect(function()
 
-
-		Tween(
-			Scale,
-			.25,
-			{
-				Scale = .85
-			}
-		)
-
-
-		task.wait(.2)
-
-
 		Main.Visible = false
 
-
 		if RestoreButton then
-
 			RestoreButton.Visible = true
+		end
+
+	end)
+
+
+
+	if RestoreButton then
+
+		RestoreButton.MouseButton1Click:Connect(function()
+
+			Main.Visible = true
+
+			RestoreButton.Visible = false
+
+		end)
+
+	end
+
+
+
+	local Full = false
+
+
+
+	Maximize.MouseButton1Click:Connect(function()
+
+		Full = not Full
+
+
+		if Full then
+
+			TweenService:Create(
+
+				Main,
+
+				TweenInfo.new(
+					0.35,
+					Enum.EasingStyle.Quint,
+					Enum.EasingDirection.Out
+				),
+
+				{
+					Size =
+						UDim2.fromScale(
+							0.85,
+							0.8
+						)
+				}
+
+			):Play()
+
+
+		else
+
+			TweenService:Create(
+
+				Main,
+
+				TweenInfo.new(
+					0.35,
+					Enum.EasingStyle.Quint,
+					Enum.EasingDirection.Out
+				),
+
+				{
+					Size = OriginalSize
+				}
+
+			):Play()
 
 		end
 
@@ -365,16 +339,13 @@ function Window:Create(
 
 	Close.MouseButton1Click:Connect(function()
 
-
 		ScreenGui:Destroy()
-
 
 	end)
 
 
 
 	local Content = Instance.new("Frame")
-
 
 	Content.Size =
 		UDim2.new(
@@ -384,23 +355,20 @@ function Window:Create(
 			-80
 		)
 
-
 	Content.Position =
 		UDim2.fromOffset(
 			20,
 			65
 		)
 
-
 	Content.BackgroundColor3 =
 		Theme.Panel
 
-
 	Content.BackgroundTransparency =
-		Theme.CardTransparency
+		0.75
 
-
-	Content.Parent = Main
+	Content.Parent =
+		Main
 
 
 
@@ -413,22 +381,44 @@ function Window:Create(
 
 	local Sidebar = Instance.new("Frame")
 
+	Sidebar.Name = "Sidebar"
+
 	Sidebar.Size =
 		UDim2.fromOffset(
 			160,
 			380
 		)
 
+	Sidebar.Position =
+		UDim2.fromOffset(
+			10,
+			20
+		)
 
 	Sidebar.BackgroundTransparency = 1
 
+	Sidebar.Parent =
+		Content
 
-	Sidebar.Parent = Content
+
+
+	local SideLayout =
+		Instance.new("UIListLayout")
+
+	SideLayout.Padding =
+		UDim.new(
+			0,
+			8
+		)
+
+	SideLayout.Parent =
+		Sidebar
 
 
 
 	local Pages = Instance.new("Frame")
 
+	Pages.Name = "Pages"
 
 	Pages.Size =
 		UDim2.new(
@@ -438,23 +428,20 @@ function Window:Create(
 			-40
 		)
 
-
 	Pages.Position =
 		UDim2.fromOffset(
 			180,
 			20
 		)
 
-
 	Pages.BackgroundTransparency = 1
 
-
-	Pages.Parent = Content
+	Pages.Parent =
+		Content
 
 
 
 	local Object = {}
-
 
 	Object.ScreenGui = ScreenGui
 
@@ -462,13 +449,13 @@ function Window:Create(
 
 
 
-	function Object:Notify(data)
+	function Object:Notify(config)
 
 		if Components.Notification then
 
 			return Components.Notification:Create(
 				ScreenGui,
-				data,
+				config,
 				Theme,
 				Utility
 			)
@@ -479,7 +466,7 @@ function Window:Create(
 
 
 
-	function Object:CreateTab(Name)
+	function Object:CreateTab(name)
 
 		local TabSystem =
 			Tab:Create(
@@ -492,13 +479,16 @@ function Window:Create(
 			)
 
 
-		return TabSystem:New(Name)
+		return TabSystem:New(name)
 
 	end
 
 
 
-	print("CrimsonCore Glass Window Loaded")
+	print(
+		"CrimsonCore Window v2.7 Loaded"
+	)
+
 
 
 	return Object
