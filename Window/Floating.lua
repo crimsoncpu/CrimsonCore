@@ -1,4 +1,4 @@
---// CrimsonCore Floating Button v3.1
+--// CrimsonCore Floating Button v3.2
 
 local Floating = {}
 
@@ -14,7 +14,7 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	Button.Size = UDim2.fromOffset(60,60)
 
-	Button.Position = UDim2.new(.5,0,.5,0)
+	Button.Position = UDim2.fromOffset(100,300)
 
 	Button.AnchorPoint = Vector2.new(.5,.5)
 
@@ -35,6 +35,7 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 	Button.Parent = ScreenGui
 
 
+
 	Utility:Corner(Button,100)
 
 	Utility:Stroke(Button,Theme.Crimson,2)
@@ -45,9 +46,11 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	local Glow = Instance.new("UIStroke")
 
+	Glow.Name = "Glow"
+
 	Glow.Color = Theme.Crimson
 
-	Glow.Thickness = 5
+	Glow.Thickness = 4
 
 	Glow.Transparency = .3
 
@@ -55,7 +58,17 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 
-	-- pulse
+	-- scale animation
+
+	local Scale = Instance.new("UIScale")
+
+	Scale.Scale = 1
+
+	Scale.Parent = Button
+
+
+
+	-- glow pulse
 
 	task.spawn(function()
 
@@ -69,9 +82,10 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 					Enum.EasingDirection.InOut
 				),
 				{
-					Transparency = .7
+					Transparency = .65
 				}
 			):Play()
+
 
 			task.wait(1)
 
@@ -88,6 +102,7 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 				}
 			):Play()
 
+
 			task.wait(1)
 
 		end
@@ -96,9 +111,11 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 
-	local dragging = false
-	local dragStart
-	local startPos
+	local Dragging = false
+
+	local DragStart
+
+	local StartPosition
 
 
 
@@ -108,11 +125,21 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 		or input.UserInputType == Enum.UserInputType.Touch then
 
 
-			dragging = true
+			Dragging = true
 
-			dragStart = input.Position
+			DragStart = input.Position
 
-			startPos = Button.Position
+			StartPosition = Button.Position
+
+
+
+			TweenService:Create(
+				Scale,
+				TweenInfo.new(.15),
+				{
+					Scale = 1.15
+				}
+			):Play()
 
 		end
 
@@ -122,22 +149,25 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	UserInputService.InputChanged:Connect(function(input)
 
-		if dragging and
+		if Dragging and
 		(
 			input.UserInputType == Enum.UserInputType.MouseMovement
 			or input.UserInputType == Enum.UserInputType.Touch
 		) then
 
 
-			local delta = input.Position - dragStart
+			local Delta =
+				input.Position - DragStart
 
 
-			Button.Position = UDim2.new(
-				startPos.X.Scale,
-				startPos.X.Offset + delta.X,
-				startPos.Y.Scale,
-				startPos.Y.Offset + delta.Y
-			)
+
+			Button.Position =
+				UDim2.new(
+					StartPosition.X.Scale,
+					StartPosition.X.Offset + Delta.X,
+					StartPosition.Y.Scale,
+					StartPosition.Y.Offset + Delta.Y
+				)
 
 		end
 
@@ -151,38 +181,55 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 		or input.UserInputType == Enum.UserInputType.Touch then
 
 
-			if dragging then
-
-				dragging = false
+			if Dragging then
 
 
-				local camera = workspace.CurrentCamera
-
-				local size = camera.ViewportSize
+				Dragging = false
 
 
-				local x =
+
+				local Camera =
+					workspace.CurrentCamera
+
+
+				local Size =
+					Camera.ViewportSize
+
+
+
+				local CenterX =
 					Button.AbsolutePosition.X +
 					Button.AbsoluteSize.X/2
 
 
-				local y =
+
+				local CenterY =
 					Button.AbsolutePosition.Y +
 					Button.AbsoluteSize.Y/2
 
 
 
-				local snapX
+				local SnapX
 
-				if x < size.X/2 then
 
-					snapX = 30
+				if CenterX < Size.X/2 then
+
+					SnapX = 35
 
 				else
 
-					snapX = size.X - 30
+					SnapX = Size.X - 35
 
 				end
+
+
+
+				local SnapY =
+					math.clamp(
+						CenterY,
+						100,
+						Size.Y - 100
+					)
 
 
 
@@ -195,13 +242,19 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 					),
 					{
 						Position = UDim2.fromOffset(
-							snapX,
-							math.clamp(
-								y,
-								100,
-								size.Y-100
-							)
+							SnapX,
+							SnapY
 						)
+					}
+				):Play()
+
+
+
+				TweenService:Create(
+					Scale,
+					TweenInfo.new(.2),
+					{
+						Scale = 1
 					}
 				):Play()
 
