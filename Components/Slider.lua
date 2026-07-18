@@ -1,6 +1,8 @@
---// CrimsonCore Slider Component v1.0
+--// CrimsonCore Slider Component v1.1 (Mobile Support)
 
 local Slider = {}
+
+local UserInputService = game:GetService("UserInputService")
 
 
 function Slider:Create(Parent, config, Theme, Utility)
@@ -9,11 +11,8 @@ function Slider:Create(Parent, config, Theme, Utility)
 
 
 	local Min = config.Min or 0
-
 	local Max = config.Max or 100
-
 	local Value = config.Default or Min
-
 
 
 	local Frame = Instance.new("Frame")
@@ -23,7 +22,6 @@ function Slider:Create(Parent, config, Theme, Utility)
 	Frame.BackgroundColor3 = Theme.Secondary
 
 	Frame.Parent = Parent
-
 
 
 	Utility:Corner(Frame,10)
@@ -63,12 +61,13 @@ function Slider:Create(Parent, config, Theme, Utility)
 	Bar.Parent = Frame
 
 
-
 	Utility:Corner(Bar,10)
 
 
 
 	local Fill = Instance.new("Frame")
+
+	Fill.BackgroundColor3 = Theme.Crimson
 
 	Fill.Size = UDim2.new(
 		(Value-Min)/(Max-Min),
@@ -77,75 +76,91 @@ function Slider:Create(Parent, config, Theme, Utility)
 		0
 	)
 
-	Fill.BackgroundColor3 = Theme.Crimson
-
 	Fill.Parent = Bar
-
 
 
 	Utility:Corner(Fill,10)
 
 
 
+	local Dragging = false
+
+
+
+	local function Update(input)
+
+		local Percent = math.clamp(
+			(input.Position.X - Bar.AbsolutePosition.X)
+			/ Bar.AbsoluteSize.X,
+			0,
+			1
+		)
+
+
+		Value = math.floor(
+			Min + ((Max-Min) * Percent)
+		)
+
+
+		Fill.Size = UDim2.new(
+			Percent,
+			0,
+			1,
+			0
+		)
+
+
+		Label.Text =
+			(config.Name or "Slider")..": "..Value
+
+
+
+		if config.Callback then
+			config.Callback(Value)
+		end
+
+	end
+
+
+
 	Bar.InputBegan:Connect(function(input)
 
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
-			local Mouse = game:GetService("UserInputService")
+			Dragging = true
 
-			local Move
+			Update(input)
 
+		end
 
-			Move = Mouse.InputChanged:Connect(function(change)
-
-				if change.UserInputType == Enum.UserInputType.MouseMovement then
-
-					local Percent = math.clamp(
-						(change.Position.X-Bar.AbsolutePosition.X)
-						/Bar.AbsoluteSize.X,
-						0,
-						1
-					)
-
-
-					Value = math.floor(
-						Min + (Max-Min)*Percent
-					)
-
-
-					Fill.Size = UDim2.new(
-						Percent,
-						0,
-						1,
-						0
-					)
-
-
-					Label.Text =
-						(config.Name or "Slider")..": "..Value
+	end)
 
 
 
-					if config.Callback then
+	UserInputService.InputChanged:Connect(function(input)
 
-						config.Callback(Value)
+		if Dragging then
 
-					end
+			if input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch then
 
-				end
+				Update(input)
 
-			end)
+			end
+
+		end
+
+	end)
 
 
-			input.Changed:Connect(function()
 
-				if input.UserInputState == Enum.UserInputState.End then
+	UserInputService.InputEnded:Connect(function(input)
 
-					Move:Disconnect()
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
-				end
-
-			end)
+			Dragging = false
 
 		end
 
