@@ -1,4 +1,4 @@
---// CrimsonCore Window System v1.5
+--// CrimsonCore Window System v1.6
 
 local Window = {}
 
@@ -175,8 +175,6 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 
 
-	-- Main Content
-
 	local Content = Instance.new("Frame")
 
 	Content.Size = UDim2.new(1,-40,1,-80)
@@ -191,8 +189,6 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 	Utility:Corner(Content,14)
 
 
-
-	-- Sidebar
 
 	local Sidebar = Instance.new("Frame")
 
@@ -214,8 +210,6 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 
 
-	-- Pages
-
 	local Pages = Instance.new("Frame")
 
 	Pages.Size = UDim2.new(1,-180,1,-40)
@@ -234,6 +228,25 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 	Object.ScreenGui = ScreenGui
 
 	Object.Main = Main
+
+
+
+	--// Notification System
+
+	function Object:Notify(config)
+
+		if Components.Notification then
+
+			return Components.Notification:Create(
+				ScreenGui,
+				config,
+				Theme,
+				Utility
+			)
+
+		end
+
+	end
 
 
 
