@@ -1,95 +1,163 @@
---// CrimsonCore Tab System v2.0
---// Premium Hybrid Edition
+--// CrimsonCore Tab System v2.4
+--// Glass Page Edition
 
 local Tab = {}
 
 local TweenService = game:GetService("TweenService")
 
 
+
 function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
-	local System = {}
+	local Object = {}
 
 
 
-	function System:New(name)
+	function Object:New(name)
 
 
-		local Button = Instance.new("TextButton")
-
-		Button.Name = name
-
-		Button.Size = UDim2.new(1,0,0,40)
-
-		Button.BackgroundColor3 = Theme.Panel
-
-		Button.BackgroundTransparency = .2
-
-		Button.Text = name
-
-		Button.TextColor3 = Theme.Text
-
-		Button.Font = Enum.Font.BuilderSansBold
-
-		Button.TextSize = 15
-
-		Button.AutoButtonColor = false
-
-		Button.Parent = Sidebar
+		local TabButton = Instance.new("TextButton")
 
 
+		TabButton.Size =
+			UDim2.new(
+				1,
+				0,
+				0,
+				40
+			)
 
-		Utility:Corner(Button,10)
 
-		Utility:Stroke(
-			Button,
-			Theme.Crimson,
-			1
+		TabButton.BackgroundColor3 =
+			Theme.Panel
+
+
+		TabButton.BackgroundTransparency =
+			0.45
+
+
+		TabButton.Text =
+			name or "Tab"
+
+
+		TabButton.TextColor3 =
+			Theme.Text
+
+
+		TabButton.Font =
+			Enum.Font.BuilderSansBold
+
+
+		TabButton.TextSize = 15
+
+
+		TabButton.Parent =
+			Sidebar
+
+
+
+		Utility:Corner(
+			TabButton,
+			10
 		)
 
 
 
 		local Page = Instance.new("ScrollingFrame")
 
-		Page.Name = name.."Page"
 
-		Page.Size = UDim2.fromScale(1,1)
+		Page.Name =
+			name or "Page"
 
-		Page.BackgroundTransparency = 1
+
+		Page.Size =
+			UDim2.new(
+				1,
+				0,
+				1,
+				0
+			)
+
+
+		Page.BackgroundColor3 =
+			Theme.Panel
+
+
+		Page.BackgroundTransparency =
+			0.60
+
+
+		Page.BorderSizePixel = 0
+
 
 		Page.ScrollBarThickness = 3
 
+
 		Page.Visible = false
 
-		Page.Parent = Pages
+
+		Page.CanvasSize =
+			UDim2.new(
+				0,
+				0,
+				0,
+				0
+			)
+
+
+		Page.Parent =
+			Pages
+
+
+
+		Utility:Corner(
+			Page,
+			14
+		)
+
+
+		Utility:Stroke(
+			Page,
+			Theme.Crimson,
+			1
+		)
 
 
 
 		local Layout = Instance.new("UIListLayout")
 
-		Layout.Padding = UDim.new(0,10)
 
-		Layout.Parent = Page
+		Layout.Padding =
+			UDim.new(
+				0,
+				10
+			)
 
 
-
-		local Padding = Instance.new("UIPadding")
-
-		Padding.PaddingTop = UDim.new(0,5)
-
-		Padding.PaddingLeft = UDim.new(0,5)
-
-		Padding.PaddingRight = UDim.new(0,5)
-
-		Padding.Parent = Page
+		Layout.Parent =
+			Page
 
 
 
-		local TabObject = {}
+		Layout:GetPropertyChangedSignal(
+			"AbsoluteContentSize"
+		):Connect(function()
+
+
+			Page.CanvasSize =
+				UDim2.new(
+					0,
+					0,
+					0,
+					Layout.AbsoluteContentSize.Y + 20
+				)
+
+
+		end)
 
 
 
-		function TabObject:Show()
+		TabButton.MouseButton1Click:Connect(function()
 
 
 			for _,v in pairs(Pages:GetChildren()) do
@@ -106,37 +174,25 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 			Page.Visible = true
 
-			Page.CanvasPosition = Vector2.new(0,0)
 
 
 			Page.BackgroundTransparency = 1
 
 
+
 			TweenService:Create(
+
 				Page,
+
 				TweenInfo.new(
-					.25,
+					.35,
 					Enum.EasingStyle.Quint
 				),
+
 				{
-					BackgroundTransparency = 0
+					BackgroundTransparency = .60
 				}
-			):Play()
 
-
-		end
-
-
-
-		Button.MouseEnter:Connect(function()
-
-
-			TweenService:Create(
-				Button,
-				TweenInfo.new(.15),
-				{
-					BackgroundColor3 = Theme.Crimson
-				}
 			):Play()
 
 
@@ -144,73 +200,29 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 
 
-		Button.MouseLeave:Connect(function()
+		function Object:CreateSection(title)
 
 
-			if Page.Visible == false then
-
-				TweenService:Create(
-					Button,
-					TweenInfo.new(.15),
-					{
-						BackgroundColor3 = Theme.Panel
-					}
-				):Play()
-
-			end
-
-
-		end)
-
-
-
-		Button.MouseButton1Click:Connect(function()
-
-			TabObject:Show()
-
-		end)
-
-
-
-		function TabObject:CreateSection(title)
-
-
-			local SectionObject =
-				Section:Create(
-					Page,
-					title,
-					Theme,
-					Utility,
-					Components
-				)
-
-
-			return SectionObject
+			return Section:Create(
+				Page,
+				title,
+				Theme,
+				Utility,
+				Components
+			)
 
 
 		end
 
 
 
-		task.delay(.1,function()
-
-			if #Pages:GetChildren() == 1 then
-
-				TabObject:Show()
-
-			end
-
-		end)
-
-
-
-		return TabObject
+		return Object
 
 	end
 
 
 
-	return System
+	return Object
 
 end
 
