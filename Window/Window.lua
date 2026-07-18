@@ -1,4 +1,4 @@
---// CrimsonCore Window System v1.6
+--// CrimsonCore Window System v1.7
 
 local Window = {}
 
@@ -29,7 +29,7 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 	Main.BackgroundColor3 = Theme.Background
 
-	Main.Parent = ScreenGui
+	Main.Parent = Main.Parent or ScreenGui
 
 
 	Utility:Corner(Main,18)
@@ -115,6 +115,8 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 
 
+	--// Floating C
+
 	local RestoreButton
 
 	if Floating then
@@ -126,6 +128,9 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 			Utility
 		)
 
+		-- hide until minimize is pressed
+		RestoreButton.Visible = false
+
 	end
 
 
@@ -135,7 +140,9 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 		Main.Visible = false
 
 		if RestoreButton then
+
 			RestoreButton.Visible = true
+
 		end
 
 	end)
@@ -230,8 +237,6 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 	Object.Main = Main
 
 
-
-	--// Notification System
 
 	function Object:Notify(config)
 
