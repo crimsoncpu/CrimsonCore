@@ -1,60 +1,79 @@
---// CrimsonCore Section System v1.1
+--// CrimsonCore Section System v2.0
+--// Premium Hybrid Edition
 
 local Section = {}
 
-
-function Section:Create(Page, name, Theme, Utility, Components)
-
-	local Frame = Instance.new("Frame")
-
-	Frame.Size = UDim2.new(1,-20,0,80)
-
-	Frame.AutomaticSize = Enum.AutomaticSize.Y
-
-	Frame.BackgroundColor3 = Theme.Panel
-
-	Frame.Parent = Page
+local TweenService = game:GetService("TweenService")
 
 
-	Utility:Corner(Frame,14)
-
-	Utility:Stroke(Frame,Theme.Crimson,1)
+function Section:Create(Page, title, Theme, Utility, Components)
 
 
-
-	local Title = Instance.new("TextLabel")
-
-	Title.Size = UDim2.new(1,-20,0,30)
-
-	Title.Position = UDim2.fromOffset(10,5)
-
-	Title.BackgroundTransparency = 1
-
-	Title.Text = name or "Section"
-
-	Title.TextColor3 = Theme.Text
-
-	Title.Font = Enum.Font.BuilderSansBold
-
-	Title.TextSize = 17
-
-	Title.TextXAlignment = Enum.TextXAlignment.Left
-
-	Title.Parent = Frame
+	local Object = {}
 
 
 
 	local Holder = Instance.new("Frame")
 
-	Holder.Size = UDim2.new(1,-20,0,0)
+	Holder.Name = title or "Section"
 
-	Holder.Position = UDim2.fromOffset(10,40)
+	Holder.Size = UDim2.new(1,-10,0,50)
 
-	Holder.AutomaticSize = Enum.AutomaticSize.Y
+	Holder.BackgroundColor3 = Theme.Panel
 
-	Holder.BackgroundTransparency = 1
+	Holder.BackgroundTransparency = .15
 
-	Holder.Parent = Frame
+	Holder.Parent = Page
+
+
+
+	Utility:Corner(
+		Holder,
+		14
+	)
+
+
+	Utility:Stroke(
+		Holder,
+		Theme.Crimson,
+		1.5
+	)
+
+
+
+	local Title = Instance.new("TextLabel")
+
+	Title.Size = UDim2.new(1,-25,0,35)
+
+	Title.Position = UDim2.fromOffset(15,5)
+
+	Title.BackgroundTransparency = 1
+
+	Title.Text = title or "Section"
+
+	Title.TextColor3 = Theme.Text
+
+	Title.Font = Enum.Font.BuilderSansBold
+
+	Title.TextSize = 18
+
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+
+	Title.Parent = Holder
+
+
+
+	local Container = Instance.new("Frame")
+
+	Container.Size = UDim2.new(1,-20,0,0)
+
+	Container.Position = UDim2.fromOffset(10,45)
+
+	Container.BackgroundTransparency = 1
+
+	Container.AutomaticSize = Enum.AutomaticSize.Y
+
+	Container.Parent = Page
 
 
 
@@ -62,25 +81,69 @@ function Section:Create(Page, name, Theme, Utility, Components)
 
 	Layout.Padding = UDim.new(0,8)
 
-	Layout.Parent = Holder
+	Layout.Parent = Container
 
 
 
-	local Object = {}
+	Holder.Size =
+		UDim2.new(
+			1,-10,
+			0,
+			50
+		)
 
 
-	Object.Frame = Frame
 
-	Object.Holder = Holder
-
+	Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 
 
-	-- Button
+		local Size =
+			Layout.AbsoluteContentSize.Y
+
+
+
+		Holder.Size =
+			UDim2.new(
+				1,-10,
+				0,
+				Size + 60
+			)
+
+
+	end)
+
+
+
+	-- small entrance animation
+
+	Holder.BackgroundTransparency = 1
+
+
+	TweenService:Create(
+		Holder,
+		TweenInfo.new(
+			.35,
+			Enum.EasingStyle.Quint
+		),
+		{
+			BackgroundTransparency = .15
+		}
+	):Play()
+
+
+
+	local function AddComponent(component)
+
+		component.Parent = Container
+
+	end
+
+
 
 	function Object:CreateButton(config)
 
 		return Components.Button:Create(
-			Holder,
+			Container,
 			config,
 			Theme,
 			Utility
@@ -89,13 +152,11 @@ function Section:Create(Page, name, Theme, Utility, Components)
 	end
 
 
-
-	-- Toggle
 
 	function Object:CreateToggle(config)
 
 		return Components.Toggle:Create(
-			Holder,
+			Container,
 			config,
 			Theme,
 			Utility
@@ -104,58 +165,11 @@ function Section:Create(Page, name, Theme, Utility, Components)
 	end
 
 
-
-	-- Slider
 
 	function Object:CreateSlider(config)
 
 		return Components.Slider:Create(
-			Holder,
-			config,
-			Theme,
-			Utility
-		)
-
-	end
-
-
-
-	-- Dropdown
-
-	function Object:CreateDropdown(config)
-
-		return Components.Dropdown:Create(
-			Holder,
-			config,
-			Theme,
-			Utility
-		)
-
-	end
-
-
-
-	-- Keybind
-
-	function Object:CreateKeybind(config)
-
-		return Components.Keybind:Create(
-			Holder,
-			config,
-			Theme,
-			Utility
-		)
-
-	end
-
-
-
-	-- Label
-
-	function Object:CreateLabel(config)
-
-		return Components.Label:Create(
-			Holder,
+			Container,
 			config,
 			Theme,
 			Utility
