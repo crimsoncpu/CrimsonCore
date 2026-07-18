@@ -1,4 +1,4 @@
---// CrimsonCore Main Loader v1.1
+--// CrimsonCore Main Loader v1.2
 
 local CrimsonCore = {}
 
@@ -66,7 +66,30 @@ CrimsonCore.Floating =
 
 
 
--- Create Window
+-- Layout
+
+CrimsonCore.Tab =
+	Load("Layout/Tab.lua")
+
+
+CrimsonCore.Section =
+	Load("Layout/Section.lua")
+
+
+
+-- Components
+
+CrimsonCore.Components = {
+
+	Button = Load("Components/Button.lua"),
+
+	Toggle = Load("Components/Toggle.lua"),
+
+	Slider = Load("Components/Slider.lua")
+
+}
+
+
 
 function CrimsonCore:CreateWindow(config)
 
@@ -80,7 +103,13 @@ function CrimsonCore:CreateWindow(config)
 
 		CrimsonCore.Drag,
 
-		CrimsonCore.Floating
+		CrimsonCore.Floating,
+
+		CrimsonCore.Tab,
+
+		CrimsonCore.Section,
+
+		CrimsonCore.Components
 
 	)
 
@@ -88,7 +117,7 @@ end
 
 
 
-print("Crimson Hub Loaded!")
+print("CrimsonCore Loaded v1.2")
 
 
 return CrimsonCore
