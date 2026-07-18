@@ -1,34 +1,107 @@
---// CrimsonCore Glass Theme v2.1
+--// CrimsonCore Theme System v2.4
+--// Full Glass Edition
 
 local Theme = {}
 
--- deep glass background
-Theme.Background = Color3.fromRGB(8,8,12)
-
--- glass panels (darker + cleaner)
-Theme.Panel = Color3.fromRGB(18,18,25)
 
 
--- crimson accents
-Theme.Crimson = Color3.fromRGB(220,30,55)
+-- Main glass background
 
-Theme.CrimsonDark = Color3.fromRGB(100,10,25)
-
-Theme.CrimsonLight = Color3.fromRGB(255,80,110)
-
-
--- text
-Theme.Text = Color3.fromRGB(245,245,250)
-
-Theme.SubText = Color3.fromRGB(160,160,170)
+Theme.Background =
+	Color3.fromRGB(
+		8,
+		8,
+		14
+	)
 
 
--- glass settings
-Theme.MainTransparency = 0.35
 
-Theme.PanelTransparency = 0.45
+-- Glass panels
 
-Theme.CardTransparency = 0.55
+Theme.Panel =
+	Color3.fromRGB(
+		18,
+		18,
+		30
+	)
+
+
+
+-- Crimson colors
+
+Theme.Crimson =
+	Color3.fromRGB(
+		220,
+		30,
+		55
+	)
+
+
+Theme.CrimsonDark =
+	Color3.fromRGB(
+		120,
+		10,
+		30
+	)
+
+
+Theme.CrimsonLight =
+	Color3.fromRGB(
+		255,
+		90,
+		120
+	)
+
+
+
+-- Text
+
+Theme.Text =
+	Color3.fromRGB(
+		245,
+		245,
+		250
+	)
+
+
+Theme.SubText =
+	Color3.fromRGB(
+		160,
+		160,
+		175
+	)
+
+
+
+-- Glass transparency
+
+Theme.MainTransparency =
+	0.35
+
+
+Theme.PanelTransparency =
+	0.50
+
+
+Theme.CardTransparency =
+	0.60
+
+
+
+-- Effects
+
+Theme.Blur =
+	true
+
+
+Theme.BlurSize =
+	14
+
+
+
+Theme.Glow =
+	true
+
 
 
 return Theme
