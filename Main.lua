@@ -1,4 +1,4 @@
---// CrimsonCore Main Loader v1.2
+--// CrimsonCore Main Loader v1.4
 
 local CrimsonCore = {}
 
@@ -81,11 +81,26 @@ CrimsonCore.Section =
 
 CrimsonCore.Components = {
 
-	Button = Load("Components/Button.lua"),
+	Button =
+		Load("Components/Button.lua"),
 
-	Toggle = Load("Components/Toggle.lua"),
+	Toggle =
+		Load("Components/Toggle.lua"),
 
-	Slider = Load("Components/Slider.lua")
+	Slider =
+		Load("Components/Slider.lua"),
+
+	Dropdown =
+		Load("Components/Dropdown.lua"),
+
+	Keybind =
+		Load("Components/Keybind.lua"),
+
+	Label =
+		Load("Components/Label.lua"),
+
+	Notification =
+		Load("Components/Notification.lua")
 
 }
 
@@ -117,7 +132,7 @@ end
 
 
 
-print("CrimsonCore Loaded v1.2")
+print("CrimsonCore Loaded v1.4")
 
 
 return CrimsonCore
