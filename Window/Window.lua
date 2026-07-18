@@ -1,27 +1,20 @@
---// CrimsonCore Window System v1.4
+--// CrimsonCore Window System v1.5
 
 local Window = {}
 
 local Players = game:GetService("Players")
-
 local Player = Players.LocalPlayer
 
 
-
-function Window:Create(config, Theme, Utility, Drag, Floating)
+function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Components)
 
 	config = config or {}
 
 
-
 	local ScreenGui = Instance.new("ScreenGui")
-
 	ScreenGui.Name = "CrimsonCore"
-
 	ScreenGui.ResetOnSpawn = false
-
 	ScreenGui.IgnoreGuiInset = true
-
 	ScreenGui.Parent = Player:WaitForChild("PlayerGui")
 
 
@@ -40,7 +33,6 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 
 	Utility:Corner(Main,18)
-
 	Utility:Stroke(Main,Theme.Crimson,2)
 
 
@@ -86,7 +78,7 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 
 
-	local function CreateTopButton(text, offset)
+	local function TopButton(text,offset)
 
 		local Button = Instance.new("TextButton")
 
@@ -115,11 +107,11 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 
 
-	local Minimize = CreateTopButton("-", -135)
+	local Minimize = TopButton("-", -135)
 
-	local Maximize = CreateTopButton("+", -90)
+	local Maximize = TopButton("+", -90)
 
-	local Close = CreateTopButton("X", -45)
+	local Close = TopButton("X", -45)
 
 
 
@@ -143,9 +135,7 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 		Main.Visible = false
 
 		if RestoreButton then
-
 			RestoreButton.Visible = true
-
 		end
 
 	end)
@@ -185,17 +175,90 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 
 
+	-- Main Content
+
+	local Content = Instance.new("Frame")
+
+	Content.Size = UDim2.new(1,-40,1,-80)
+
+	Content.Position = UDim2.fromOffset(20,65)
+
+	Content.BackgroundColor3 = Theme.Panel
+
+	Content.Parent = Main
+
+
+	Utility:Corner(Content,14)
+
+
+
+	-- Sidebar
+
+	local Sidebar = Instance.new("Frame")
+
+	Sidebar.Size = UDim2.fromOffset(160,380)
+
+	Sidebar.Position = UDim2.fromOffset(10,20)
+
+	Sidebar.BackgroundTransparency = 1
+
+	Sidebar.Parent = Content
+
+
+
+	local SideLayout = Instance.new("UIListLayout")
+
+	SideLayout.Padding = UDim.new(0,8)
+
+	SideLayout.Parent = Sidebar
+
+
+
+	-- Pages
+
+	local Pages = Instance.new("Frame")
+
+	Pages.Size = UDim2.new(1,-180,1,-40)
+
+	Pages.Position = UDim2.fromOffset(180,20)
+
+	Pages.BackgroundTransparency = 1
+
+	Pages.Parent = Content
+
+
+
+	local Object = {}
+
+
+	Object.ScreenGui = ScreenGui
+
+	Object.Main = Main
+
+
+
+	function Object:CreateTab(name)
+
+		local TabSystem = Tab:Create(
+			Pages,
+			Sidebar,
+			Theme,
+			Utility,
+			Section,
+			Components
+		)
+
+
+		return TabSystem:New(name)
+
+	end
+
+
+
 	print("CrimsonCore Window Created")
 
 
-
-	return {
-
-		ScreenGui = ScreenGui,
-
-		Main = Main
-
-	}
+	return Object
 
 end
 
