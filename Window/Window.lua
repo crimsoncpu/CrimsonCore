@@ -1,9 +1,33 @@
---// CrimsonCore Window System v1.7
+--// CrimsonCore Window System v2.0
+--// Hybrid Glass Edition
 
 local Window = {}
 
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
 local Player = Players.LocalPlayer
+
+
+local function Tween(obj,time,properties,style,direction)
+
+	local info = TweenInfo.new(
+		time,
+		style or Enum.EasingStyle.Quint,
+		direction or Enum.EasingDirection.Out
+	)
+
+	local tween = TweenService:Create(
+		obj,
+		info,
+		properties
+	)
+
+	tween:Play()
+
+	return tween
+end
+
 
 
 function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Components)
@@ -11,15 +35,22 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 	config = config or {}
 
 
+
 	local ScreenGui = Instance.new("ScreenGui")
+
 	ScreenGui.Name = "CrimsonCore"
+
 	ScreenGui.ResetOnSpawn = false
+
 	ScreenGui.IgnoreGuiInset = true
+
 	ScreenGui.Parent = Player:WaitForChild("PlayerGui")
 
 
 
 	local Main = Instance.new("Frame")
+
+	Main.Name = "MainWindow"
 
 	Main.Size = UDim2.fromOffset(760,500)
 
@@ -29,19 +60,57 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 	Main.BackgroundColor3 = Theme.Background
 
-	Main.Parent = Main.Parent or ScreenGui
+	Main.BackgroundTransparency = 1
+
+	Main.Parent = ScreenGui
+
 
 
 	Utility:Corner(Main,18)
+
 	Utility:Stroke(Main,Theme.Crimson,2)
 
 
+
+	local UIScale = Instance.new("UIScale")
+
+	UIScale.Scale = .85
+
+	UIScale.Parent = Main
+
+
+
+	-- opening animation
+
+	Tween(
+		Main,
+		.45,
+		{
+			BackgroundTransparency = 0
+		}
+	)
+
+
+	Tween(
+		UIScale,
+		.45,
+		{
+			Scale = 1
+		},
+		Enum.EasingStyle.Back
+	)
+
+
+
+	-- top bar
 
 	local Top = Instance.new("Frame")
 
 	Top.Size = UDim2.new(1,0,0,55)
 
 	Top.BackgroundColor3 = Theme.Panel
+
+	Top.BackgroundTransparency = .1
 
 	Top.Parent = Main
 
@@ -78,28 +147,61 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 
 
-	local function TopButton(text,offset)
+	local function CreateButton(text,x)
 
 		local Button = Instance.new("TextButton")
 
 		Button.Size = UDim2.fromOffset(35,35)
 
-		Button.Position = UDim2.new(1,offset,.5,-17)
+		Button.Position = UDim2.new(1,x,.5,-17)
+
+		Button.BackgroundColor3 = Theme.Crimson
 
 		Button.Text = text
 
 		Button.TextColor3 = Theme.Text
 
-		Button.BackgroundColor3 = Theme.Crimson
-
 		Button.Font = Enum.Font.BuilderSansBold
 
 		Button.TextSize = 18
 
+		Button.AutoButtonColor = false
+
 		Button.Parent = Top
 
 
+
 		Utility:Corner(Button,10)
+
+
+
+		Button.MouseEnter:Connect(function()
+
+			Tween(
+				Button,
+				.15,
+				{
+					Size = UDim2.fromOffset(40,40)
+				}
+			)
+
+		end)
+
+
+
+		Button.MouseLeave:Connect(function()
+
+			Tween(
+				Button,
+				.15,
+				{
+					Size = UDim2.fromOffset(35,35)
+				}
+			)
+
+		end)
+
+
 
 		return Button
 
@@ -107,17 +209,16 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 
 
-	local Minimize = TopButton("-", -135)
+	local Minimize = CreateButton("-", -135)
 
-	local Maximize = TopButton("+", -90)
+	local Maximize = CreateButton("+", -90)
 
-	local Close = TopButton("X", -45)
+	local Close = CreateButton("X", -45)
 
 
-
-	--// Floating C
 
 	local RestoreButton
+
 
 	if Floating then
 
@@ -128,7 +229,7 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 			Utility
 		)
 
-		-- hide until minimize is pressed
+
 		RestoreButton.Visible = false
 
 	end
@@ -137,7 +238,21 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 	Minimize.MouseButton1Click:Connect(function()
 
+
+		Tween(
+			Main,
+			.3,
+			{
+				BackgroundTransparency = 1
+			}
+		)
+
+
+		task.wait(.25)
+
+
 		Main.Visible = false
+
 
 		if RestoreButton then
 
@@ -151,22 +266,35 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 	local Full = false
 
-	local OriginalSize = Main.Size
+	local OldSize = Main.Size
 
 
 
 	Maximize.MouseButton1Click:Connect(function()
+
 
 		Full = not Full
 
 
 		if Full then
 
-			Main.Size = UDim2.fromScale(.9,.8)
+			Tween(
+				Main,
+				.35,
+				{
+					Size = UDim2.fromScale(.9,.8)
+				}
+			)
 
 		else
 
-			Main.Size = OriginalSize
+			Tween(
+				Main,
+				.35,
+				{
+					Size = OldSize
+				}
+			)
 
 		end
 
@@ -175,6 +303,19 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 
 	Close.MouseButton1Click:Connect(function()
+
+
+		Tween(
+			Main,
+			.25,
+			{
+				BackgroundTransparency = 1
+			}
+		)
+
+
+		task.wait(.25)
+
 
 		ScreenGui:Destroy()
 
@@ -189,6 +330,8 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 	Content.Position = UDim2.fromOffset(20,65)
 
 	Content.BackgroundColor3 = Theme.Panel
+
+	Content.BackgroundTransparency = .15
 
 	Content.Parent = Main
 
@@ -206,14 +349,6 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 	Sidebar.BackgroundTransparency = 1
 
 	Sidebar.Parent = Content
-
-
-
-	local SideLayout = Instance.new("UIListLayout")
-
-	SideLayout.Padding = UDim.new(0,8)
-
-	SideLayout.Parent = Sidebar
 
 
 
@@ -238,13 +373,13 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 
 
 
-	function Object:Notify(config)
+	function Object:Notify(data)
 
 		if Components.Notification then
 
 			return Components.Notification:Create(
 				ScreenGui,
-				config,
+				data,
 				Theme,
 				Utility
 			)
@@ -266,14 +401,13 @@ function Window:Create(config, Theme, Utility, Drag, Floating, Tab, Section, Com
 			Components
 		)
 
-
 		return TabSystem:New(name)
 
 	end
 
 
 
-	print("CrimsonCore Window Created")
+	print("CrimsonCore Window v2.0 Loaded")
 
 
 	return Object
