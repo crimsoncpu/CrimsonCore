@@ -1,4 +1,4 @@
---// CrimsonCore Window System v1.0
+--// CrimsonCore Window System v1.3
 
 local Window = {}
 
@@ -8,7 +8,7 @@ local Player = Players.LocalPlayer
 
 
 
-function Window:Create(config, Theme, Utility, Drag)
+function Window:Create(config, Theme, Utility, Drag, Floating)
 
 	config = config or {}
 
@@ -85,23 +85,23 @@ function Window:Create(config, Theme, Utility, Drag)
 
 
 
-	local function TopButton(text,x)
+	local function CreateTopButton(text, offset)
 
 		local Button = Instance.new("TextButton")
 
 		Button.Size = UDim2.fromOffset(35,35)
 
-		Button.Position = UDim2.new(1,x,0.5,-17)
+		Button.Position = UDim2.new(1,offset,0.5,-17)
 
 		Button.Text = text
 
 		Button.TextColor3 = Theme.Text
 
+		Button.BackgroundColor3 = Theme.Crimson
+
 		Button.Font = Enum.Font.BuilderSansBold
 
 		Button.TextSize = 18
-
-		Button.BackgroundColor3 = Theme.Crimson
 
 		Button.Parent = Top
 
@@ -114,34 +114,30 @@ function Window:Create(config, Theme, Utility, Drag)
 
 
 
-	local Minimize = TopButton("-", -135)
+	local Minimize = CreateTopButton("-", -135)
 
-	local Maximize = TopButton("+", -90)
+	local Maximize = CreateTopButton("+", -90)
 
-	local Close = TopButton("X", -45)
+	local Close = CreateTopButton("X", -45)
 
 
 
 	local OriginalSize = Main.Size
 
-	local Minimized = false
+	local Hidden = false
 
 
 	Minimize.MouseButton1Click:Connect(function()
 
-		Minimized = not Minimized
+		Hidden = not Hidden
 
-		if Minimized then
+		if Hidden then
 
-			Utility:Tween(Main,.25,{
-				Size = UDim2.fromOffset(760,55)
-			})
+			Main.Size = UDim2.fromOffset(760,55)
 
 		else
 
-			Utility:Tween(Main,.25,{
-				Size = OriginalSize
-			})
+			Main.Size = OriginalSize
 
 		end
 
@@ -156,20 +152,13 @@ function Window:Create(config, Theme, Utility, Drag)
 
 		Full = not Full
 
-
 		if Full then
 
-			Utility:Tween(Main,.25,{
-				Size = UDim2.fromScale(.9,.8),
-				Position = UDim2.fromScale(.5,.5)
-			})
+			Main.Size = UDim2.fromScale(.9,.8)
 
 		else
 
-			Utility:Tween(Main,.25,{
-				Size = OriginalSize,
-				Position = UDim2.fromScale(.5,.5)
-			})
+			Main.Size = OriginalSize
 
 		end
 
@@ -185,50 +174,16 @@ function Window:Create(config, Theme, Utility, Drag)
 
 
 
-	local Content = Instance.new("Frame")
+	if Floating then
 
-	Content.Size = UDim2.new(1,-40,1,-80)
+		Floating:Create(
+			ScreenGui,
+			Main,
+			Theme,
+			Utility
+		)
 
-	Content.Position = UDim2.fromOffset(20,65)
-
-	Content.BackgroundColor3 = Theme.Panel
-
-	Content.Parent = Main
-
-
-	Utility:Corner(Content,14)
-
-
-
-	local Sidebar = Instance.new("Frame")
-
-	Sidebar.Size = UDim2.fromOffset(160,1)
-
-	Sidebar.AutomaticSize = Enum.AutomaticSize.Y
-
-	Sidebar.BackgroundTransparency = 1
-
-	Sidebar.Parent = Content
-
-
-
-	local SidebarLayout = Instance.new("UIListLayout")
-
-	SidebarLayout.Padding = UDim.new(0,8)
-
-	SidebarLayout.Parent = Sidebar
-
-
-
-	local Pages = Instance.new("Frame")
-
-	Pages.Size = UDim2.new(1,-180,1,0)
-
-	Pages.Position = UDim2.fromOffset(180,0)
-
-	Pages.BackgroundTransparency = 1
-
-	Pages.Parent = Content
+	end
 
 
 
@@ -242,13 +197,7 @@ function Window:Create(config, Theme, Utility, Drag)
 
 		Main = Main,
 
-		Top = Top,
-
-		Content = Content,
-
-		Sidebar = Sidebar,
-
-		Pages = Pages
+		Top = Top
 
 	}
 
