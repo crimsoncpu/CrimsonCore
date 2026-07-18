@@ -1,4 +1,4 @@
---// CrimsonCore Window System v1.3
+--// CrimsonCore Window System v1.4
 
 local Window = {}
 
@@ -11,6 +11,7 @@ local Player = Players.LocalPlayer
 function Window:Create(config, Theme, Utility, Drag, Floating)
 
 	config = config or {}
+
 
 
 	local ScreenGui = Instance.new("ScreenGui")
@@ -91,7 +92,7 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 		Button.Size = UDim2.fromOffset(35,35)
 
-		Button.Position = UDim2.new(1,offset,0.5,-17)
+		Button.Position = UDim2.new(1,offset,.5,-17)
 
 		Button.Text = text
 
@@ -122,22 +123,28 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 
 
-	local OriginalSize = Main.Size
+	local RestoreButton
 
-	local Hidden = false
+	if Floating then
+
+		RestoreButton = Floating:Create(
+			ScreenGui,
+			Main,
+			Theme,
+			Utility
+		)
+
+	end
+
 
 
 	Minimize.MouseButton1Click:Connect(function()
 
-		Hidden = not Hidden
+		Main.Visible = false
 
-		if Hidden then
+		if RestoreButton then
 
-			Main.Size = UDim2.fromOffset(760,55)
-
-		else
-
-			Main.Size = OriginalSize
+			RestoreButton.Visible = true
 
 		end
 
@@ -147,10 +154,14 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 	local Full = false
 
+	local OriginalSize = Main.Size
+
+
 
 	Maximize.MouseButton1Click:Connect(function()
 
 		Full = not Full
+
 
 		if Full then
 
@@ -174,19 +185,6 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 
 
-	if Floating then
-
-		Floating:Create(
-			ScreenGui,
-			Main,
-			Theme,
-			Utility
-		)
-
-	end
-
-
-
 	print("CrimsonCore Window Created")
 
 
@@ -195,14 +193,11 @@ function Window:Create(config, Theme, Utility, Drag, Floating)
 
 		ScreenGui = ScreenGui,
 
-		Main = Main,
-
-		Top = Top
+		Main = Main
 
 	}
 
 end
-
 
 
 return Window
