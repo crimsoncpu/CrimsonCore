@@ -1,4 +1,4 @@
---// CrimsonCore Notification Component v1.0
+--// CrimsonCore Notification Component v1.1 Animated
 
 local Notification = {}
 
@@ -17,14 +17,13 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 		Holder.Name = "Notifications"
 
-		Holder.Size = UDim2.new(0,300,1,-20)
+		Holder.Size = UDim2.new(0,320,1,-40)
 
-		Holder.Position = UDim2.new(1,-320,0,20)
+		Holder.Position = UDim2.new(1,-340,0,20)
 
 		Holder.BackgroundTransparency = 1
 
 		Holder.Parent = ScreenGui
-
 
 
 		local Layout = Instance.new("UIListLayout")
@@ -41,9 +40,13 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 	local Box = Instance.new("Frame")
 
-	Box.Size = UDim2.fromOffset(300,60)
+	Box.Size = UDim2.fromOffset(300,65)
 
 	Box.BackgroundColor3 = Theme.Panel
+
+	Box.BackgroundTransparency = 1
+
+	Box.Position = UDim2.fromOffset(40,0)
 
 	Box.Parent = Holder
 
@@ -64,6 +67,8 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 	Text.TextColor3 = Theme.Text
 
+	Text.TextTransparency = 1
+
 	Text.Font = Enum.Font.BuilderSansBold
 
 	Text.TextSize = 14
@@ -76,18 +81,42 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 
 
-	task.delay(
-		config.Duration or 3,
-		function()
+	-- animate in
 
-			if Box then
+	Utility:Tween(Box,.35,{
+		BackgroundTransparency = 0,
+		Position = UDim2.fromOffset(0,0)
+	})
 
-				Box:Destroy()
 
-			end
+	Utility:Tween(Text,.35,{
+		TextTransparency = 0
+	})
 
-		end
-	)
+
+
+	task.delay(config.Duration or 3,function()
+
+
+		-- animate out
+
+		Utility:Tween(Box,.35,{
+			BackgroundTransparency = 1,
+			Position = UDim2.fromOffset(40,0)
+		})
+
+
+		Utility:Tween(Text,.35,{
+			TextTransparency = 1
+		})
+
+
+		task.wait(.4)
+
+
+		Box:Destroy()
+
+	end)
 
 
 
