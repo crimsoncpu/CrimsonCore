@@ -1,14 +1,115 @@
---// CrimsonCore Theme v1.0
+--// CrimsonCore Theme System v2.0
+--// Premium Hybrid Edition
 
 local Theme = {}
 
-Theme.Background = Color3.fromRGB(10,10,15)
-Theme.Panel = Color3.fromRGB(20,20,30)
 
-Theme.Crimson = Color3.fromRGB(220,20,60)
-Theme.Secondary = Color3.fromRGB(45,45,60)
 
-Theme.Text = Color3.fromRGB(255,255,255)
-Theme.Muted = Color3.fromRGB(160,160,170)
+-- Main colors
+
+Theme.Background =
+	Color3.fromRGB(
+		12,
+		12,
+		18
+	)
+
+
+Theme.Panel =
+	Color3.fromRGB(
+		22,
+		22,
+		32
+	)
+
+
+
+-- Crimson colors
+
+Theme.Crimson =
+	Color3.fromRGB(
+		220,
+		30,
+		55
+	)
+
+
+Theme.CrimsonDark =
+	Color3.fromRGB(
+		120,
+		10,
+		30
+	)
+
+
+Theme.CrimsonLight =
+	Color3.fromRGB(
+		255,
+		70,
+		100
+	)
+
+
+
+-- Text
+
+Theme.Text =
+	Color3.fromRGB(
+		245,
+		245,
+		245
+	)
+
+
+Theme.SubText =
+	Color3.fromRGB(
+		170,
+		170,
+		180
+	)
+
+
+
+-- Extra UI colors
+
+Theme.Success =
+	Color3.fromRGB(
+		60,
+		220,
+		120
+	)
+
+
+Theme.Warning =
+	Color3.fromRGB(
+		255,
+		190,
+		60
+	)
+
+
+Theme.Error =
+	Color3.fromRGB(
+		255,
+		70,
+		70
+	)
+
+
+
+-- Transparency presets
+
+Theme.Glass =
+	0.15
+
+
+Theme.ButtonTransparency =
+	0.1
+
+
+Theme.CardTransparency =
+	0.2
+
+
 
 return Theme
