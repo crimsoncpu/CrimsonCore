@@ -1,4 +1,5 @@
---// CrimsonCore Floating Button v3.2
+--// CrimsonCore Floating Button v3.5
+--// Premium Hybrid Edition
 
 local Floating = {}
 
@@ -8,11 +9,12 @@ local UserInputService = game:GetService("UserInputService")
 
 function Floating:Create(ScreenGui, Main, Theme, Utility)
 
+
 	local Button = Instance.new("TextButton")
 
 	Button.Name = "CrimsonFloating"
 
-	Button.Size = UDim2.fromOffset(60,60)
+	Button.Size = UDim2.fromOffset(62,62)
 
 	Button.Position = UDim2.fromOffset(100,300)
 
@@ -42,24 +44,6 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 
-	-- glow
-
-	local Glow = Instance.new("UIStroke")
-
-	Glow.Name = "Glow"
-
-	Glow.Color = Theme.Crimson
-
-	Glow.Thickness = 4
-
-	Glow.Transparency = .3
-
-	Glow.Parent = Button
-
-
-
-	-- scale animation
-
 	local Scale = Instance.new("UIScale")
 
 	Scale.Scale = 1
@@ -68,7 +52,19 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 
-	-- glow pulse
+	local Glow = Instance.new("UIStroke")
+
+	Glow.Color = Theme.Crimson
+
+	Glow.Thickness = 5
+
+	Glow.Transparency = .25
+
+	Glow.Parent = Button
+
+
+
+	-- pulse glow
 
 	task.spawn(function()
 
@@ -82,7 +78,7 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 					Enum.EasingDirection.InOut
 				),
 				{
-					Transparency = .65
+					Transparency = .7
 				}
 			):Play()
 
@@ -117,6 +113,8 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	local StartPosition
 
+	local Moved = false
+
 
 
 	Button.InputBegan:Connect(function(input)
@@ -126,6 +124,8 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 			Dragging = true
+
+			Moved = false
 
 			DragStart = input.Position
 
@@ -161,6 +161,14 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 
+			if Delta.Magnitude > 5 then
+
+				Moved = true
+
+			end
+
+
+
 			Button.Position =
 				UDim2.new(
 					StartPosition.X.Scale,
@@ -183,8 +191,17 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 			if Dragging then
 
-
 				Dragging = false
+
+
+
+				TweenService:Create(
+					Scale,
+					TweenInfo.new(.2),
+					{
+						Scale = 1
+					}
+				):Play()
 
 
 
@@ -224,37 +241,23 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 
-				local SnapY =
-					math.clamp(
-						CenterY,
-						100,
-						Size.Y - 100
-					)
-
-
-
 				TweenService:Create(
 					Button,
 					TweenInfo.new(
-						.5,
+						.45,
 						Enum.EasingStyle.Quint,
 						Enum.EasingDirection.Out
 					),
 					{
-						Position = UDim2.fromOffset(
-							SnapX,
-							SnapY
-						)
-					}
-				):Play()
-
-
-
-				TweenService:Create(
-					Scale,
-					TweenInfo.new(.2),
-					{
-						Scale = 1
+						Position =
+							UDim2.fromOffset(
+								SnapX,
+								math.clamp(
+									CenterY,
+									100,
+									Size.Y-100
+								)
+							)
 					}
 				):Play()
 
@@ -268,9 +271,25 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	Button.MouseButton1Click:Connect(function()
 
-		Main.Visible = true
+		if not Moved then
 
-		Button.Visible = false
+			Main.Visible = true
+
+			Button.Visible = false
+
+
+			TweenService:Create(
+				Main,
+				TweenInfo.new(
+					.35,
+					Enum.EasingStyle.Back
+				),
+				{
+					Size = UDim2.fromOffset(760,500)
+				}
+			):Play()
+
+		end
 
 	end)
 
