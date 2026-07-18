@@ -1,5 +1,5 @@
---// CrimsonCore Tab System v2.5
---// Fixed Category Text Edition
+--// CrimsonCore Tab System v2.6
+--// Fixed Double Text Edition
 
 local Tab = {}
 
@@ -11,15 +11,11 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 	local Object = {}
 
 
-
 	function Object:New(name)
-
 
 		local TabButton = Instance.new("TextButton")
 
-		TabButton.Name =
-			name or "Tab"
-
+		TabButton.Name = name or "Tab"
 
 		TabButton.Size =
 			UDim2.new(
@@ -29,46 +25,19 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 				40
 			)
 
-
 		TabButton.BackgroundColor3 =
 			Theme.Panel
-
 
 		TabButton.BackgroundTransparency =
 			0.55
 
+		-- remove default text
+		TabButton.Text = ""
 
-		TabButton.Text =
-			name or "Tab"
-
-
-		TabButton.TextColor3 =
-			Theme.Text
-
-
-		TabButton.Font =
-			Enum.Font.BuilderSansBold
-
-
-		TabButton.TextSize = 15
-
-
-		-- FIX CATEGORY TEXT
-
-		TabButton.TextXAlignment =
-			Enum.TextXAlignment.Left
-
-
-		TabButton.TextTruncate =
-			Enum.TextTruncate.AtEnd
-
-
-		TabButton.ZIndex = 2
-
+		TabButton.AutoButtonColor = false
 
 		TabButton.Parent =
 			Sidebar
-
 
 
 		Utility:Corner(
@@ -78,27 +47,54 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 
 
-		-- padding so text isn't touching edge
+		local TabText = Instance.new("TextLabel")
 
-		local Padding = Instance.new("UIPadding")
+		TabText.Name = "TabText"
 
-		Padding.PaddingLeft =
-			UDim.new(
-				0,
-				14
+		TabText.Size =
+			UDim2.new(
+				1,
+				-20,
+				1,
+				0
 			)
 
-		Padding.Parent =
+		TabText.Position =
+			UDim2.fromOffset(
+				15,
+				0
+			)
+
+		TabText.BackgroundTransparency = 1
+
+		TabText.Text =
+			name or "Tab"
+
+		TabText.TextColor3 =
+			Theme.Text
+
+		TabText.Font =
+			Enum.Font.BuilderSansBold
+
+		TabText.TextSize = 15
+
+		TabText.TextXAlignment =
+			Enum.TextXAlignment.Left
+
+		TabText.TextTruncate =
+			Enum.TextTruncate.AtEnd
+
+		TabText.ZIndex = 3
+
+		TabText.Parent =
 			TabButton
 
 
 
 		local Page = Instance.new("ScrollingFrame")
 
-
 		Page.Name =
 			name or "Page"
-
 
 		Page.Size =
 			UDim2.new(
@@ -108,23 +104,17 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 				0
 			)
 
-
 		Page.BackgroundColor3 =
 			Theme.Panel
-
 
 		Page.BackgroundTransparency =
 			0.65
 
-
 		Page.BorderSizePixel = 0
-
 
 		Page.ScrollBarThickness = 3
 
-
 		Page.Visible = false
-
 
 		Page.CanvasSize =
 			UDim2.new(
@@ -133,7 +123,6 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 				0,
 				0
 			)
-
 
 		Page.Parent =
 			Pages
@@ -146,7 +135,6 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 		)
 
 
-
 		Utility:Stroke(
 			Page,
 			Theme.Crimson,
@@ -157,13 +145,11 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 		local Layout = Instance.new("UIListLayout")
 
-
 		Layout.Padding =
 			UDim.new(
 				0,
 				10
 			)
-
 
 		Layout.Parent =
 			Page
@@ -173,7 +159,6 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 		Layout:GetPropertyChangedSignal(
 			"AbsoluteContentSize"
 		):Connect(function()
-
 
 			Page.CanvasSize =
 				UDim2.new(
@@ -190,7 +175,6 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 		TabButton.MouseButton1Click:Connect(function()
 
 
-
 			for _,v in pairs(Pages:GetChildren()) do
 
 				if v:IsA("ScrollingFrame") then
@@ -202,9 +186,7 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 			end
 
 
-
 			Page.Visible = true
-
 
 
 			TweenService:Create(
@@ -223,28 +205,19 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 			):Play()
 
 
-
 		end)
 
 
 
 		function Object:CreateSection(title)
 
-
 			return Section:Create(
-
 				Page,
-
 				title,
-
 				Theme,
-
 				Utility,
-
 				Components
-
 			)
-
 
 		end
 
