@@ -1,14 +1,13 @@
---// CrimsonCore Floating Button v1.0
+--// CrimsonCore Floating Restore Button v1.0
 
 local Floating = {}
-
 
 
 function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	local Button = Instance.new("TextButton")
 
-	Button.Name = "CrimsonCoreFloating"
+	Button.Name = "CrimsonCoreRestore"
 
 	Button.Size = UDim2.fromOffset(55,55)
 
@@ -24,10 +23,9 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 	Button.TextSize = 28
 
-	Button.AutoButtonColor = false
+	Button.Visible = false
 
 	Button.Parent = ScreenGui
-
 
 
 	Utility:Corner(Button,999)
@@ -36,75 +34,11 @@ function Floating:Create(ScreenGui, Main, Theme, Utility)
 
 
 
-	local Open = true
-
-
 	Button.MouseButton1Click:Connect(function()
 
-		Open = not Open
+		Main.Visible = true
 
-		Main.Visible = Open
-
-	end)
-
-
-
-	local Dragging = false
-
-	local StartPos
-
-	local StartMouse
-
-
-
-	Button.InputBegan:Connect(function(input)
-
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-
-			Dragging = true
-
-			StartMouse = input.Position
-
-			StartPos = Button.Position
-
-		end
-
-	end)
-
-
-
-	Button.InputEnded:Connect(function(input)
-
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-
-			Dragging = false
-
-		end
-
-	end)
-
-
-
-	game:GetService("UserInputService").InputChanged:Connect(function(input)
-
-		if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-
-			local Delta = input.Position - StartMouse
-
-
-			Button.Position = UDim2.new(
-
-				StartPos.X.Scale,
-
-				StartPos.X.Offset + Delta.X,
-
-				StartPos.Y.Scale,
-
-				StartPos.Y.Offset + Delta.Y
-
-			)
-
-		end
+		Button.Visible = false
 
 	end)
 
