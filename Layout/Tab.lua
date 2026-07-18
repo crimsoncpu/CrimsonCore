@@ -1,10 +1,9 @@
---// CrimsonCore Tab System v2.4
---// Glass Page Edition
+--// CrimsonCore Tab System v2.5
+--// Fixed Category Text Edition
 
 local Tab = {}
 
 local TweenService = game:GetService("TweenService")
-
 
 
 function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
@@ -17,6 +16,9 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 
 		local TabButton = Instance.new("TextButton")
+
+		TabButton.Name =
+			name or "Tab"
 
 
 		TabButton.Size =
@@ -33,7 +35,7 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 
 		TabButton.BackgroundTransparency =
-			0.45
+			0.55
 
 
 		TabButton.Text =
@@ -51,6 +53,19 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 		TabButton.TextSize = 15
 
 
+		-- FIX CATEGORY TEXT
+
+		TabButton.TextXAlignment =
+			Enum.TextXAlignment.Left
+
+
+		TabButton.TextTruncate =
+			Enum.TextTruncate.AtEnd
+
+
+		TabButton.ZIndex = 2
+
+
 		TabButton.Parent =
 			Sidebar
 
@@ -60,6 +75,21 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 			TabButton,
 			10
 		)
+
+
+
+		-- padding so text isn't touching edge
+
+		local Padding = Instance.new("UIPadding")
+
+		Padding.PaddingLeft =
+			UDim.new(
+				0,
+				14
+			)
+
+		Padding.Parent =
+			TabButton
 
 
 
@@ -84,7 +114,7 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 
 		Page.BackgroundTransparency =
-			0.60
+			0.65
 
 
 		Page.BorderSizePixel = 0
@@ -114,6 +144,7 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 			Page,
 			14
 		)
+
 
 
 		Utility:Stroke(
@@ -152,12 +183,12 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 					Layout.AbsoluteContentSize.Y + 20
 				)
 
-
 		end)
 
 
 
 		TabButton.MouseButton1Click:Connect(function()
+
 
 
 			for _,v in pairs(Pages:GetChildren()) do
@@ -176,24 +207,21 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 
 
-			Page.BackgroundTransparency = 1
-
-
-
 			TweenService:Create(
 
 				Page,
 
 				TweenInfo.new(
-					.35,
+					0.25,
 					Enum.EasingStyle.Quint
 				),
 
 				{
-					BackgroundTransparency = .60
+					BackgroundTransparency = 0.65
 				}
 
 			):Play()
+
 
 
 		end)
@@ -204,11 +232,17 @@ function Tab:Create(Pages, Sidebar, Theme, Utility, Section, Components)
 
 
 			return Section:Create(
+
 				Page,
+
 				title,
+
 				Theme,
+
 				Utility,
+
 				Components
+
 			)
 
 
