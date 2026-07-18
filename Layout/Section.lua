@@ -1,4 +1,4 @@
---// CrimsonCore Section System v1.0
+--// CrimsonCore Section System v1.1
 
 local Section = {}
 
@@ -75,6 +75,8 @@ function Section:Create(Page, name, Theme, Utility, Components)
 
 
 
+	-- Button
+
 	function Object:CreateButton(config)
 
 		return Components.Button:Create(
@@ -87,6 +89,8 @@ function Section:Create(Page, name, Theme, Utility, Components)
 	end
 
 
+
+	-- Toggle
 
 	function Object:CreateToggle(config)
 
@@ -101,9 +105,56 @@ function Section:Create(Page, name, Theme, Utility, Components)
 
 
 
+	-- Slider
+
 	function Object:CreateSlider(config)
 
 		return Components.Slider:Create(
+			Holder,
+			config,
+			Theme,
+			Utility
+		)
+
+	end
+
+
+
+	-- Dropdown
+
+	function Object:CreateDropdown(config)
+
+		return Components.Dropdown:Create(
+			Holder,
+			config,
+			Theme,
+			Utility
+		)
+
+	end
+
+
+
+	-- Keybind
+
+	function Object:CreateKeybind(config)
+
+		return Components.Keybind:Create(
+			Holder,
+			config,
+			Theme,
+			Utility
+		)
+
+	end
+
+
+
+	-- Label
+
+	function Object:CreateLabel(config)
+
+		return Components.Label:Create(
 			Holder,
 			config,
 			Theme,
