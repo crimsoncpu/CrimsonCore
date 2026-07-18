@@ -1,10 +1,9 @@
---// CrimsonCore Section System v2.3
---// Fixed Auto Expand Edition
+--// CrimsonCore Section System v2.4
+--// Full Glass Section Edition
 
 local Section = {}
 
 local TweenService = game:GetService("TweenService")
-
 
 
 function Section:Create(Page, title, Theme, Utility, Components)
@@ -22,7 +21,7 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			1,
 			-10,
 			0,
-			80
+			70
 		)
 
 	Holder.AutomaticSize =
@@ -30,11 +29,15 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 	Holder.ClipsDescendants = false
 
+
+	-- GLASS SECTION
+
 	Holder.BackgroundColor3 =
 		Theme.Panel
 
 	Holder.BackgroundTransparency =
-		Theme.CardTransparency or .25
+		0.80
+
 
 	Holder.Parent = Page
 
@@ -45,10 +48,11 @@ function Section:Create(Page, title, Theme, Utility, Components)
 		14
 	)
 
+
 	Utility:Stroke(
 		Holder,
 		Theme.Crimson,
-		1.5
+		1
 	)
 
 
@@ -69,21 +73,28 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			5
 		)
 
+
 	Title.BackgroundTransparency = 1
+
 
 	Title.Text =
 		title or "Section"
 
+
 	Title.TextColor3 =
 		Theme.Text
+
 
 	Title.Font =
 		Enum.Font.BuilderSansBold
 
+
 	Title.TextSize = 18
+
 
 	Title.TextXAlignment =
 		Enum.TextXAlignment.Left
+
 
 	Title.Parent = Holder
 
@@ -91,7 +102,9 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 	local Container = Instance.new("Frame")
 
-	Container.Name = "Components"
+	Container.Name =
+		"Components"
+
 
 	Container.Size =
 		UDim2.new(
@@ -101,18 +114,23 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			0
 		)
 
+
 	Container.Position =
 		UDim2.fromOffset(
 			10,
 			40
 		)
 
+
 	Container.AutomaticSize =
 		Enum.AutomaticSize.Y
 
-	Container.ClipsDescendants = false
 
 	Container.BackgroundTransparency = 1
+
+
+	Container.ClipsDescendants = false
+
 
 	Container.Parent = Holder
 
@@ -120,14 +138,17 @@ function Section:Create(Page, title, Theme, Utility, Components)
 
 	local Layout = Instance.new("UIListLayout")
 
+
 	Layout.Padding =
 		UDim.new(
 			0,
 			8
 		)
 
+
 	Layout.SortOrder =
 		Enum.SortOrder.LayoutOrder
+
 
 	Layout.Parent = Container
 
@@ -137,6 +158,7 @@ function Section:Create(Page, title, Theme, Utility, Components)
 		"AbsoluteContentSize"
 	):Connect(function()
 
+
 		Holder.Size =
 			UDim2.new(
 				1,
@@ -145,30 +167,35 @@ function Section:Create(Page, title, Theme, Utility, Components)
 				Layout.AbsoluteContentSize.Y + 55
 			)
 
+
 	end)
 
 
 
-	-- smooth appear
+	-- smooth glass fade
 
 	Holder.BackgroundTransparency = 1
 
+
 	TweenService:Create(
+
 		Holder,
+
 		TweenInfo.new(
-			.35,
+			0.35,
 			Enum.EasingStyle.Quint,
 			Enum.EasingDirection.Out
 		),
+
 		{
-			BackgroundTransparency =
-				Theme.CardTransparency or .25
+			BackgroundTransparency = 0.80
 		}
+
 	):Play()
 
 
 
-	-- Components
+	-- COMPONENT LINKS
 
 
 	function Object:CreateButton(config)
