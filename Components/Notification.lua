@@ -1,4 +1,5 @@
---// CrimsonCore Notification Component v1.5
+--// CrimsonCore Notification System v2.0
+--// Premium Hybrid Edition
 
 local Notification = {}
 
@@ -10,6 +11,7 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 	config = config or {}
 
 
+
 	local Holder = ScreenGui:FindFirstChild("Notifications")
 
 
@@ -19,14 +21,14 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 		Holder.Name = "Notifications"
 
-		Holder.Size = UDim2.fromOffset(350,250)
+		Holder.Size = UDim2.fromOffset(360,300)
 
-		-- bottom right Roblox-style position
-		Holder.Position = UDim2.new(1,-340,1,-330)
+		Holder.Position = UDim2.new(1,-380,1,-330)
 
 		Holder.BackgroundTransparency = 1
 
 		Holder.Parent = ScreenGui
+
 
 
 		local Layout = Instance.new("UIListLayout")
@@ -41,61 +43,61 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 
 
-	local Box = Instance.new("Frame")
+	local Card = Instance.new("Frame")
 
-	Box.Size = UDim2.fromOffset(320,70)
+	Card.Size = UDim2.fromOffset(330,75)
 
-	Box.BackgroundColor3 = Theme.Panel
+	Card.BackgroundColor3 = Theme.Panel
 
-	Box.BackgroundTransparency = 1
+	Card.BackgroundTransparency = 1
 
-	Box.Position = UDim2.fromOffset(60,0)
+	Card.Position = UDim2.fromOffset(80,0)
 
-	Box.Parent = Holder
-
-
-
-	Utility:Corner(Box,14)
-
-	Utility:Stroke(Box,Theme.Crimson,1)
+	Card.Parent = Holder
 
 
 
-	local Text = Instance.new("TextLabel")
+	Utility:Corner(Card,16)
 
-	Text.Size = UDim2.new(1,-25,1,0)
-
-	Text.Position = UDim2.fromOffset(15,0)
-
-	Text.BackgroundTransparency = 1
-
-	Text.TextColor3 = Theme.Text
-
-	Text.TextTransparency = 1
-
-	Text.Font = Enum.Font.BuilderSansBold
-
-	Text.TextSize = 15
-
-	Text.TextXAlignment = Enum.TextXAlignment.Left
-
-	Text.Text = config.Text or "Notification"
-
-	Text.Parent = Box
+	Utility:Stroke(Card,Theme.Crimson,2)
 
 
 
-	-- smooth fade + slide in
+	local Title = Instance.new("TextLabel")
+
+	Title.Size = UDim2.new(1,-25,1,0)
+
+	Title.Position = UDim2.fromOffset(15,0)
+
+	Title.BackgroundTransparency = 1
+
+	Title.Text = config.Text or "Notification"
+
+	Title.TextColor3 = Theme.Text
+
+	Title.TextTransparency = 1
+
+	Title.Font = Enum.Font.BuilderSansBold
+
+	Title.TextSize = 16
+
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+
+	Title.Parent = Card
+
+
+
+	-- fade + slide in
 
 	TweenService:Create(
-		Box,
+		Card,
 		TweenInfo.new(
-			0.45,
+			.45,
 			Enum.EasingStyle.Quint,
 			Enum.EasingDirection.Out
 		),
 		{
-			BackgroundTransparency = 0,
+			BackgroundTransparency = .1,
 			Position = UDim2.fromOffset(0,0)
 		}
 	):Play()
@@ -103,12 +105,8 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 
 	TweenService:Create(
-		Text,
-		TweenInfo.new(
-			0.35,
-			Enum.EasingStyle.Quint,
-			Enum.EasingDirection.Out
-		),
+		Title,
+		TweenInfo.new(.35),
 		{
 			TextTransparency = 0
 		}
@@ -116,33 +114,27 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 
 
-	-- fade + slide out
-
 	task.delay(config.Duration or 3,function()
 
 
 		TweenService:Create(
-			Box,
+			Card,
 			TweenInfo.new(
-				0.35,
+				.35,
 				Enum.EasingStyle.Quint,
 				Enum.EasingDirection.In
 			),
 			{
 				BackgroundTransparency = 1,
-				Position = UDim2.fromOffset(70,0)
+				Position = UDim2.fromOffset(90,0)
 			}
 		):Play()
 
 
 
 		TweenService:Create(
-			Text,
-			TweenInfo.new(
-				0.25,
-				Enum.EasingStyle.Quint,
-				Enum.EasingDirection.In
-			),
+			Title,
+			TweenInfo.new(.25),
 			{
 				TextTransparency = 1
 			}
@@ -152,13 +144,13 @@ function Notification:Create(ScreenGui, config, Theme, Utility)
 
 		task.wait(.4)
 
-		Box:Destroy()
+		Card:Destroy()
 
 	end)
 
 
 
-	return Box
+	return Card
 
 end
 
