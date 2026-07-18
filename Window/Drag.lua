@@ -1,15 +1,46 @@
---// CrimsonCore Drag System v1.0
+--// CrimsonCore Drag System v2.0
 
 local Drag = {}
 
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 
 
 function Drag:Enable(Frame, Handle)
 
 	local Dragging = false
+
 	local DragStart
+
 	local StartPosition
+
+	local CurrentInput
+
+
+
+	local function Update(input)
+
+		local Delta = input.Position - DragStart
+
+
+		local NewX =
+			StartPosition.X.Offset + Delta.X
+
+
+		local NewY =
+			StartPosition.Y.Offset + Delta.Y
+
+
+
+		Frame.Position = UDim2.new(
+			StartPosition.X.Scale,
+			NewX,
+			StartPosition.Y.Scale,
+			NewY
+		)
+
+	end
+
 
 
 	Handle.InputBegan:Connect(function(input)
@@ -17,11 +48,24 @@ function Drag:Enable(Frame, Handle)
 		if input.UserInputType == Enum.UserInputType.MouseButton1
 		or input.UserInputType == Enum.UserInputType.Touch then
 
+
 			Dragging = true
 
 			DragStart = input.Position
 
 			StartPosition = Frame.Position
+
+
+			input.Changed:Connect(function()
+
+				if input.UserInputState ==
+					Enum.UserInputState.End then
+
+					Dragging = false
+
+				end
+
+			end)
 
 		end
 
@@ -29,12 +73,15 @@ function Drag:Enable(Frame, Handle)
 
 
 
-	Handle.InputEnded:Connect(function(input)
+	Handle.InputChanged:Connect(function(input)
 
-		if input.UserInputType == Enum.UserInputType.MouseButton1
-		or input.UserInputType == Enum.UserInputType.Touch then
+		if input.UserInputType ==
+			Enum.UserInputType.MouseMovement
+		or input.UserInputType ==
+			Enum.UserInputType.Touch then
 
-			Dragging = false
+
+			CurrentInput = input
 
 		end
 
@@ -44,27 +91,15 @@ function Drag:Enable(Frame, Handle)
 
 	UserInputService.InputChanged:Connect(function(input)
 
-		if Dragging then
+		if input == CurrentInput and Dragging then
 
-			if input.UserInputType == Enum.UserInputType.MouseMovement
-			or input.UserInputType == Enum.UserInputType.Touch then
-
-
-				local Delta = input.Position - DragStart
-
-
-				Frame.Position = UDim2.new(
-					StartPosition.X.Scale,
-					StartPosition.X.Offset + Delta.X,
-					StartPosition.Y.Scale,
-					StartPosition.Y.Offset + Delta.Y
-				)
-
-			end
+			Update(input)
 
 		end
 
 	end)
+
+
 
 end
 
