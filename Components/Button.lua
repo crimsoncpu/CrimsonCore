@@ -1,58 +1,134 @@
---// CrimsonCore Button Component v1.0
+--// CrimsonCore Button Component v2.0
+--// Premium Hybrid Edition
 
 local Button = {}
 
+local TweenService = game:GetService("TweenService")
 
-function Button:Create(Parent, config, Theme, Utility)
+
+function Button:Create(parent, config, Theme, Utility)
 
 	config = config or {}
 
 
-	local Object = Instance.new("TextButton")
 
-	Object.Size = UDim2.new(1,-10,0,38)
+	local MainButton = Instance.new("TextButton")
 
-	Object.BackgroundColor3 = Theme.Secondary
+	MainButton.Name = config.Name or "Button"
 
-	Object.Text = config.Name or "Button"
+	MainButton.Size = UDim2.new(1,-10,0,42)
 
-	Object.TextColor3 = Theme.Text
+	MainButton.BackgroundColor3 = Theme.Panel
 
-	Object.Font = Enum.Font.BuilderSansBold
+	MainButton.Text = config.Text or "Button"
 
-	Object.TextSize = 14
+	MainButton.TextColor3 = Theme.Text
 
-	Object.AutoButtonColor = false
+	MainButton.Font = Enum.Font.BuilderSansBold
 
-	Object.Parent = Parent
+	MainButton.TextSize = 16
 
+	MainButton.AutoButtonColor = false
 
-
-	Utility:Corner(Object,10)
-
+	MainButton.Parent = parent
 
 
-	Object.MouseEnter:Connect(function()
 
-		Utility:Tween(Object,.15,{
-			BackgroundColor3 = Theme.Crimson
-		})
+	Utility:Corner(MainButton,12)
+
+	Utility:Stroke(
+		MainButton,
+		Theme.Crimson,
+		1.5
+	)
+
+
+
+	local Scale = Instance.new("UIScale")
+
+	Scale.Scale = 1
+
+	Scale.Parent = MainButton
+
+
+
+	-- hover
+
+	MainButton.MouseEnter:Connect(function()
+
+		TweenService:Create(
+			MainButton,
+			TweenInfo.new(.2),
+			{
+				BackgroundColor3 = Theme.Crimson
+			}
+		):Play()
+
+
+
+		TweenService:Create(
+			Scale,
+			TweenInfo.new(.15),
+			{
+				Scale = 1.04
+			}
+		):Play()
 
 	end)
 
 
 
-	Object.MouseLeave:Connect(function()
+	MainButton.MouseLeave:Connect(function()
 
-		Utility:Tween(Object,.15,{
-			BackgroundColor3 = Theme.Secondary
-		})
+		TweenService:Create(
+			MainButton,
+			TweenInfo.new(.2),
+			{
+				BackgroundColor3 = Theme.Panel
+			}
+		):Play()
+
+
+
+		TweenService:Create(
+			Scale,
+			TweenInfo.new(.15),
+			{
+				Scale = 1
+			}
+		):Play()
 
 	end)
 
 
 
-	Object.MouseButton1Click:Connect(function()
+	-- click animation
+
+	MainButton.MouseButton1Down:Connect(function()
+
+		TweenService:Create(
+			Scale,
+			TweenInfo.new(.1),
+			{
+				Scale = .95
+			}
+		):Play()
+
+	end)
+
+
+
+	MainButton.MouseButton1Up:Connect(function()
+
+		TweenService:Create(
+			Scale,
+			TweenInfo.new(.15),
+			{
+				Scale = 1.04
+			}
+		):Play()
+
+
 
 		if config.Callback then
 
@@ -64,7 +140,7 @@ function Button:Create(Parent, config, Theme, Utility)
 
 
 
-	return Object
+	return MainButton
 
 end
 
