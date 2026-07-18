@@ -1,14 +1,16 @@
---// CrimsonCore Section System v2.2
---// Full Component Support
+--// CrimsonCore Section System v2.3
+--// Fixed Auto Expand Edition
 
 local Section = {}
 
 local TweenService = game:GetService("TweenService")
 
 
+
 function Section:Create(Page, title, Theme, Utility, Components)
 
 	local Object = {}
+
 
 
 	local Holder = Instance.new("Frame")
@@ -20,17 +22,19 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			1,
 			-10,
 			0,
-			60
+			80
 		)
 
+	Holder.AutomaticSize =
+		Enum.AutomaticSize.Y
+
+	Holder.ClipsDescendants = false
 
 	Holder.BackgroundColor3 =
 		Theme.Panel
 
-
 	Holder.BackgroundTransparency =
 		Theme.CardTransparency or .25
-
 
 	Holder.Parent = Page
 
@@ -40,7 +44,6 @@ function Section:Create(Page, title, Theme, Utility, Components)
 		Holder,
 		14
 	)
-
 
 	Utility:Stroke(
 		Holder,
@@ -57,9 +60,8 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			1,
 			-20,
 			0,
-			35
+			30
 		)
-
 
 	Title.Position =
 		UDim2.fromOffset(
@@ -67,34 +69,29 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			5
 		)
 
-
 	Title.BackgroundTransparency = 1
-
 
 	Title.Text =
 		title or "Section"
 
-
 	Title.TextColor3 =
 		Theme.Text
-
 
 	Title.Font =
 		Enum.Font.BuilderSansBold
 
-
 	Title.TextSize = 18
-
 
 	Title.TextXAlignment =
 		Enum.TextXAlignment.Left
-
 
 	Title.Parent = Holder
 
 
 
 	local Container = Instance.new("Frame")
+
+	Container.Name = "Components"
 
 	Container.Size =
 		UDim2.new(
@@ -104,20 +101,18 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			0
 		)
 
-
 	Container.Position =
 		UDim2.fromOffset(
 			10,
-			45
+			40
 		)
-
-
-	Container.BackgroundTransparency = 1
-
 
 	Container.AutomaticSize =
 		Enum.AutomaticSize.Y
 
+	Container.ClipsDescendants = false
+
+	Container.BackgroundTransparency = 1
 
 	Container.Parent = Holder
 
@@ -131,6 +126,8 @@ function Section:Create(Page, title, Theme, Utility, Components)
 			8
 		)
 
+	Layout.SortOrder =
+		Enum.SortOrder.LayoutOrder
 
 	Layout.Parent = Container
 
@@ -140,39 +137,33 @@ function Section:Create(Page, title, Theme, Utility, Components)
 		"AbsoluteContentSize"
 	):Connect(function()
 
-
 		Holder.Size =
 			UDim2.new(
 				1,
 				-10,
 				0,
-				Layout.AbsoluteContentSize.Y + 60
+				Layout.AbsoluteContentSize.Y + 55
 			)
-
 
 	end)
 
 
 
-	-- animation
+	-- smooth appear
 
 	Holder.BackgroundTransparency = 1
 
-
 	TweenService:Create(
-
 		Holder,
-
 		TweenInfo.new(
 			.35,
-			Enum.EasingStyle.Quint
+			Enum.EasingStyle.Quint,
+			Enum.EasingDirection.Out
 		),
-
 		{
 			BackgroundTransparency =
 				Theme.CardTransparency or .25
 		}
-
 	):Play()
 
 
